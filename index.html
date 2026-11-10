@@ -1,12 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shelly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Shelly</h1>
-    <h2>adsads</h2>
+
+    <!-- MENÚ -->
+    <header class="menu">
+        <a href="index.html" class="menu__logo">Shelly</a>
+        <nav class="menu__links">
+            <a href="#statement">Statement</a>
+            <a href="#bio">CV / Bio</a>
+            <a href="work.html">Work</a>
+            <a href="press.html">Press</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <!-- INICIO: nombre + 5 obras girando -->
+    <main class="inicio">
+        <h1 class="inicio__nombre">Shelly</h1>
+
+        <div class="orbita" aria-label="Obras destacadas">
+            <!-- Cambia src por la ruta de cada obra (ej. img/obra-1.jpg) -->
+            <a href="work.html" class="obra" style="--i:0">
+                <span class="obra__marco">
+                    <img src="img/obra-1.jpg" alt="Obra 1" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:1">
+                <span class="obra__marco">
+                    <img src="img/obra-2.jpg" alt="Obra 2" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:2">
+                <span class="obra__marco">
+                    <img src="img/obra-3.jpg" alt="Obra 3" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:3">
+                <span class="obra__marco">
+                    <img src="img/obra-4.jpg" alt="Obra 4" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:4">
+                <span class="obra__marco">
+                    <img src="img/obra-5.jpg" alt="Obra 5" onerror="this.remove()">
+                </span>
+            </a>
+        </div>
+    </main>
+
 </body>
 </html>
