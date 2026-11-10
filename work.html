@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work — Shelly Sarfati</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/work.css">
+</head>
+<body>
+
+  <!-- Menú (compartido con el resto del equipo; ajusten los enlaces a sus páginas) -->
+  <header class="site-header">
+    <a class="site-name" href="index.html">Shelly Sarfati</a>
+    <nav class="site-nav" aria-label="Principal">
+      <a href="index.html#statement">Statement</a>
+      <a href="work.html" aria-current="page">Work</a>
+      <a href="index.html#cv-bio">CV/Bio</a>
+      <a href="press.html">Press</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="work">
+    <div class="work-head">
+      <h1 class="work-title">Work</h1>
+
+      <div class="view-switch" role="group" aria-label="Modo de vista">
+        <button type="button" class="view-btn" data-view="general" aria-pressed="true">Vista general</button>
+        <button type="button" class="view-btn" data-view="galeria" aria-pressed="false">Galería</button>
+      </div>
+    </div>
+
+    <nav class="series-tabs" aria-label="Colecciones" id="series-tabs"></nav>
+
+    <ul class="grid" id="grid" aria-live="polite"></ul>
+  </main>
+
+  <!-- ============ GALERÍA ============ -->
+  <div class="gallery" id="gallery" role="dialog" aria-modal="true" aria-labelledby="label-title" hidden>
+    <button type="button" class="gallery-back" id="gallery-back">Regresar</button>
+    <p class="gallery-count" id="gallery-count" aria-live="polite"></p>
+
+    <div class="room-viewport">
+      <div class="room" id="room">
+        <div class="plane ceiling"></div>
+        <div class="plane wall-left"></div>
+        <div class="plane wall-right"></div>
+        <div class="plane floor"></div>
+        <div class="back-wall" id="back-wall">
+          <div class="spot" id="spot"></div>
+          <button type="button" class="artwork" id="artwork" aria-label="Acercarse a la obra">
+            <img id="artwork-img" alt="" draggable="false">
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="arrow arrow-prev" id="prev" aria-label="Obra anterior">
+      <svg viewBox="0 0 48 16" aria-hidden="true"><path d="M47 8H2M9 1L2 8l7 7"/></svg>
+    </button>
+    <button type="button" class="arrow arrow-next" id="next" aria-label="Obra siguiente">
+      <svg viewBox="0 0 48 16" aria-hidden="true"><path d="M1 8h45M39 1l7 7-7 7"/></svg>
+    </button>
+
+    <!-- Ficha técnica -->
+    <div class="label" id="label">
+      <p class="label-title"><span id="label-title"></span><span class="label-year" id="label-year"></span></p>
+      <p class="label-line" id="label-tecnica"></p>
+      <p class="label-line" id="label-medidas"></p>
+    </div>
+  </div>
+
+  <script src="js/obras.js"></script>
+  <script src="js/work.js"></script>
+</body>
+</html>
