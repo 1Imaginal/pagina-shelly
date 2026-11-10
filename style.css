@@ -1,28 +1,100 @@
-/* ===== Base ===== */
-:root {
-    --fondo: #f7f5f1;
-    --tinta: #141414;
-    --gris: #8a8780;
-    --placeholder: #e4e1da;
+/* =========================================================
+   SHELLY — Hoja de estilos
+   ---------------------------------------------------------
+   1. Tipografías (se cargan aquí, no hace falta otro <link>)
+   2. Variables del diseño: colores, fuentes, tamaños, espacios
+   3. Base
+   4. Componentes compartidos (menú, títulos de sección)
+   5. Secciones (inicio, statement, ...)
+   6. Responsive
 
-    --vuelta: 60s;                  /* tiempo de una vuelta completa */
-    --orbita: min(66vmin, 600px);   /* diámetro del círculo de obras */
-    --obra: calc(var(--orbita) * 0.21); /* ancho de cada obra */
+   Regla para el equipo: NO escribir colores, fuentes ni
+   tamaños “a mano” en las secciones. Usar siempre las
+   variables de la parte 2. Si falta una, agregarla ahí.
+   ========================================================= */
+
+
+/* ---------- 1. TIPOGRAFÍAS ---------- */
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400&display=swap");
+
+
+/* ---------- 2. VARIABLES DEL DISEÑO ---------- */
+:root {
+
+    /* --- Colores --- */
+    --color-fondo:        #f7f5f1;   /* hueso, fondo general */
+    --color-tinta:        #141414;   /* texto principal y títulos */
+    --color-gris:         #8a8780;   /* texto secundario, enlaces inactivos */
+    --color-placeholder:  #e4e1da;   /* cajas vacías mientras carga una imagen */
+    --color-linea:        rgba(20, 20, 20, .12);     /* separadores */
+    --color-menu-fondo:   rgba(247, 245, 241, .88);  /* fondo translúcido del menú */
+    --color-sombra:       rgba(0, 0, 0, .35);
+
+    /* --- Familias tipográficas --- */
+    --fuente-titulos: "Syne", system-ui, sans-serif;   /* nombre, logo, títulos */
+    --fuente-texto:   "Inter", system-ui, sans-serif;  /* párrafos, menú, botones */
+
+    /* --- Pesos --- */
+    --peso-light:     300;
+    --peso-regular:   400;
+    --peso-bold:      700;
+    --peso-extrabold: 800;
+
+    /* --- Tamaños de letra --- */
+    --texto-nombre:   clamp(2.6rem, 9vmin, 6rem);    /* "SHELLY" en el inicio */
+    --texto-titulo:   clamp(1.6rem, 3.2vw, 2.4rem);  /* títulos de sección */
+    --texto-entrada:  1.15em;                        /* primer párrafo destacado */
+    --texto-cuerpo:   clamp(1rem, 1.15vw, 1.1rem);   /* párrafos */
+    --texto-logo:     0.95rem;
+    --texto-menu:     0.78rem;
+    --texto-pequeno:  0.72rem;                       /* etiquetas, ES / EN */
+
+    /* --- Interlineado y espaciado de letras --- */
+    --interlineado-texto:   1.8;
+    --interlineado-entrada: 1.65;
+    --tracking-amplio:      0.14em;   /* menú y etiquetas */
+    --tracking-titulo:      0.04em;
+    --tracking-nombre:      0.02em;
+
+    /* --- Espacios --- */
+    --margen-lateral:    clamp(1.2rem, 4vw, 3rem);   /* márgenes izquierdo/derecho */
+    --espacio-seccion:   clamp(5rem, 12vh, 8rem);    /* arriba/abajo de cada sección */
+    --espacio-columnas:  clamp(2rem, 6vw, 6rem);     /* entre imagen y texto */
+    --espacio-titulo:    clamp(1.8rem, 4vw, 3rem);   /* debajo de un título */
+    --ancho-maximo:      1200px;                     /* ancho máximo del contenido */
+    --ancho-lectura:     38rem;                      /* ancho cómodo para párrafos */
+    --alto-menu:         4rem;                       /* para que los anclas no queden bajo el menú */
+
+    /* --- Movimiento --- */
+    --transicion-rapida: .3s ease;
+    --transicion-suave:  .5s ease;
+
+    /* --- Inicio: órbita de obras --- */
+    --vuelta: 60s;                          /* tiempo de una vuelta completa */
+    --orbita: min(66vmin, 600px);           /* diámetro del círculo de obras */
+    --obra:   calc(var(--orbita) * 0.21);   /* ancho de cada obra */
 }
 
+
+/* ---------- 3. BASE ---------- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html { scroll-behavior: smooth; }
+
 body {
-    background: var(--fondo);
-    color: var(--tinta);
-    font-family: "Inter", system-ui, sans-serif;
-    font-weight: 300;
+    background: var(--color-fondo);
+    color: var(--color-tinta);
+    font-family: var(--fuente-texto);
+    font-weight: var(--peso-light);
     -webkit-font-smoothing: antialiased;
 }
 
 a { color: inherit; text-decoration: none; }
 
-/* ===== Menú ===== */
+
+/* ---------- 4. COMPONENTES COMPARTIDOS ---------- */
+
+/* Menú */
 .menu {
     position: fixed;
     inset: 0 0 auto 0;
@@ -30,17 +102,20 @@ a { color: inherit; text-decoration: none; }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.4rem clamp(1.2rem, 4vw, 3rem);
-    font-size: 0.78rem;
-    letter-spacing: 0.14em;
+    padding: 1.4rem var(--margen-lateral);
+    font-size: var(--texto-menu);
+    letter-spacing: var(--tracking-amplio);
     text-transform: lowercase;
+    background: var(--color-menu-fondo);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .menu__logo {
-    font-family: "Syne", sans-serif;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    font-size: 0.95rem;
+    font-family: var(--fuente-titulos);
+    font-weight: var(--peso-bold);
+    font-size: var(--texto-logo);
+    letter-spacing: var(--tracking-titulo);
 }
 
 .menu__links {
@@ -50,8 +125,8 @@ a { color: inherit; text-decoration: none; }
 
 .menu__links a {
     position: relative;
-    color: var(--gris);
-    transition: color .3s;
+    color: var(--color-gris);
+    transition: color var(--transicion-rapida);
 }
 
 .menu__links a::after {
@@ -59,14 +134,49 @@ a { color: inherit; text-decoration: none; }
     position: absolute;
     left: 0; bottom: -4px;
     width: 100%; height: 1px;
-    background: var(--tinta);
+    background: var(--color-tinta);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform .35s ease;
 }
 
-.menu__links a:hover { color: var(--tinta); }
+.menu__links a:hover { color: var(--color-tinta); }
 .menu__links a:hover::after { transform: scaleX(1); }
+
+/* Títulos de sección (Statement, CV / Bio, Cartografías...) */
+.seccion__titulo {
+    font-family: var(--fuente-titulos);
+    font-weight: var(--peso-bold);
+    font-size: var(--texto-titulo);
+    letter-spacing: var(--tracking-titulo);
+    text-transform: uppercase;
+}
+
+/* Selector de idioma ES / EN */
+.idioma {
+    display: flex;
+    gap: .45rem;
+    font-size: var(--texto-pequeno);
+    letter-spacing: var(--tracking-amplio);
+    color: var(--color-gris);
+}
+
+.idioma button {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: .2rem 0;
+    transition: color var(--transicion-rapida);
+}
+
+.idioma button:hover,
+.idioma button[aria-pressed="true"] { color: var(--color-tinta); }
+
+
+/* ---------- 5. SECCIONES ---------- */
 
 /* ===== Inicio ===== */
 .inicio {
@@ -81,15 +191,15 @@ a { color: inherit; text-decoration: none; }
 .inicio__nombre {
     position: relative;
     z-index: 2;
-    font-family: "Syne", sans-serif;
-    font-weight: 800;
-    font-size: clamp(2.6rem, 9vmin, 6rem);
-    letter-spacing: 0.02em;
+    font-family: var(--fuente-titulos);
+    font-weight: var(--peso-extrabold);
+    font-size: var(--texto-nombre);
+    letter-spacing: var(--tracking-nombre);
     text-transform: uppercase;
     pointer-events: none;
 }
 
-/* ===== Órbita ===== */
+/* Órbita */
 .orbita {
     position: absolute;
     width: var(--orbita);
@@ -114,10 +224,10 @@ a { color: inherit; text-decoration: none; }
 .obra__marco {
     display: block;
     aspect-ratio: 4 / 5;
-    background: var(--placeholder);
+    background: var(--color-placeholder);
     overflow: hidden;
     animation: girar var(--vuelta) linear infinite reverse;
-    transition: scale .5s ease, box-shadow .5s ease;
+    transition: scale var(--transicion-suave), box-shadow var(--transicion-suave);
 }
 
 .obra__marco img {
@@ -131,24 +241,81 @@ a { color: inherit; text-decoration: none; }
    Se usa "scale" (no "transform") para no chocar con la animación. */
 .obra:hover .obra__marco {
     scale: 1.08;
-    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .35);
+    box-shadow: 0 18px 40px -18px var(--color-sombra);
 }
 
 @keyframes girar {
     to { transform: rotate(360deg); }
 }
 
+/* ===== Statement ===== */
+.statement {
+    scroll-margin-top: var(--alto-menu);
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--espacio-columnas);
+    align-items: start;
+    max-width: var(--ancho-maximo);
+    margin: 0 auto;
+    padding: var(--espacio-seccion) var(--margen-lateral);
+    border-top: 1px solid var(--color-linea);
+}
+
+/* Recorte de una obra: solo color y textura, sin figura reconocible */
+.statement__textura {
+    position: sticky;
+    top: 6rem;
+    aspect-ratio: 4 / 5;
+    background: var(--color-placeholder) url("img/textura-statement.webp") center / cover no-repeat;
+    filter: saturate(.85);
+}
+
+.statement__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: var(--espacio-titulo);
+}
+
+.statement__texto {
+    max-width: var(--ancho-lectura);
+    font-size: var(--texto-cuerpo);
+    line-height: var(--interlineado-texto);
+}
+
+.statement__texto p + p { margin-top: 1.4em; }
+
+/* Primera frase un poco más presente */
+.statement__texto p:first-child {
+    font-size: var(--texto-entrada);
+    line-height: var(--interlineado-entrada);
+    font-weight: var(--peso-regular);
+}
+
+
+/* ---------- 6. RESPONSIVE ---------- */
+
 /* Accesibilidad: sin movimiento si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
     .orbita, .obra__marco { animation: none; }
+    html { scroll-behavior: auto; }
 }
 
-/* ===== Móvil ===== */
+/* Móvil */
 @media (max-width: 640px) {
     :root {
-        --orbita: 74vw;
-        --obra: calc(var(--orbita) * 0.22);
+        --orbita:     74vw;
+        --obra:       calc(var(--orbita) * 0.22);
+        --alto-menu:  6rem;   /* el menú ocupa dos líneas */
     }
+
     .menu { flex-direction: column; gap: .8rem; }
     .menu__links { gap: 1rem; font-size: 0.7rem; }
+
+    .statement { grid-template-columns: 1fr; }
+    .statement__textura {
+        position: static;
+        aspect-ratio: 16 / 9;
+    }
 }

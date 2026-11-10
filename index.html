@@ -4,9 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shelly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Shelly</h1>
-    <h2>hole</h2>
+    <!-- MENÚ -->
+    <header class="menu">
+        <a href="index.html" class="menu__logo">Shelly</a>
+        <nav class="menu__links">
+            <a href="#statement">Statement</a>
+            <a href="#bio">CV / Bio</a>
+            <a href="work.html">Work</a>
+            <a href="press.html">Press</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <!-- INICIO: nombre + 5 obras girando -->
+    <main>
+    <section class="inicio">
+        <h1 class="inicio__nombre">Shelly</h1>
+
+        <div class="orbita" aria-label="Obras destacadas">
+            <!-- Cambia src por la ruta de cada obra (ej. img/obra-1.jpg) -->
+            <a href="work.html" class="obra" style="--i:0">
+                <span class="obra__marco">
+                    <img src="img/obra-1.avif" alt="Obra 1" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:1">
+                <span class="obra__marco">
+                    <img src="img/obra-2.avif" alt="Obra 2" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:2">
+                <span class="obra__marco">
+                    <img src="img/obra-3.avif" alt="Obra 3" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:3">
+                <span class="obra__marco">
+                    <img src="img/obra-4.avif" alt="Obra 4" onerror="this.remove()">
+                </span>
+            </a>
+            <a href="work.html" class="obra" style="--i:4">
+                <span class="obra__marco">
+                    <img src="img/obra-5.avif" alt="Obra 5" onerror="this.remove()">
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <!-- STATEMENT -->
+    <section class="statement" id="statement">
+        <!-- Detalle (recorte) de la obra 2: solo color y textura -->
+        <div class="statement__textura" role="img" aria-label="Detalle de textura de una obra de Shelly"></div>
+
+        <div class="statement__contenido">
+            <div class="statement__cabecera">
+                <h2 class="seccion__titulo">Statement</h2>
+                <div class="idioma" role="group" aria-label="Idioma">
+                    <button type="button" data-idioma="es" aria-pressed="true">ES</button>
+                    <span aria-hidden="true">/</span>
+                    <button type="button" data-idioma="en" aria-pressed="false">EN</button>
+                </div>
+            </div>
+
+            <div class="statement__texto" lang="es" data-texto="es">
+                <p>Mi práctica artística se centra en el cuerpo como un territorio sensible y cambiante. Me interesa observar cómo la percepción corporal se transforma en situaciones de tensión, pausa o desajuste, y cómo esas variaciones pueden traducirse en decisiones visuales y materiales.</p>
+                <p>Trabajo principalmente desde la pintura y el dibujo, entendidos como espacios de exploración más que de representación. A través de la fragmentación, la repetición y el uso de estructuras incompletas, construyo imágenes que permanecen abiertas y en proceso. Las superficies funcionan como registros de un cuerpo que no se presenta como unidad estable, sino como una presencia en constante negociación.</p>
+                <p>Concibo el estudio como un espacio de observación continua, donde el hacer artístico opera como una forma de pensamiento desde la experiencia. Mi interés está en generar obras que activen una relación sensible con el espectador, invitándolo a habitar la ambigüedad y a repensar su propia percepción corporal.</p>
+            </div>
+
+            <div class="statement__texto" lang="en" data-texto="en" hidden>
+                <p>My artistic practice centers on the body as a sensitive and shifting territory. I am interested in how bodily perception transforms in moments of tension, pause, or imbalance, and how these variations can be translated into visual and material decisions.</p>
+                <p>I work primarily through painting and drawing, understood as spaces of exploration rather than representation. Through fragmentation, repetition, and the use of incomplete structures, I create images that remain open and process-based. The surfaces function as traces of a body that does not present itself as a stable whole, but as a presence in constant negotiation.</p>
+                <p>I approach the studio as a space of ongoing observation, where artistic making operates as a form of embodied thinking. My work seeks to generate a quiet but active encounter, inviting the viewer to engage with ambiguity and to reconsider their own bodily perception.</p>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <script>
+        // Cambio de idioma del statement (ES / EN)
+        document.querySelectorAll('.idioma button').forEach(function (boton) {
+            boton.addEventListener('click', function () {
+                var idioma = boton.dataset.idioma;
+                document.querySelectorAll('.idioma button').forEach(function (b) {
+                    b.setAttribute('aria-pressed', b === boton);
+                });
+                document.querySelectorAll('[data-texto]').forEach(function (bloque) {
+                    bloque.hidden = bloque.dataset.texto !== idioma;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
