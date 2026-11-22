@@ -1,0 +1,113 @@
+/* PRESS / CONTACT use the same Newsreader + Archivo system as WORK.
+   Loaded after styles.css and css/work.css; WORK and CV remain unchanged. */
+.site-header {
+  position: static;
+  min-height: 0;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 24px;
+  padding: 22px clamp(16px, 4vw, 56px);
+}
+.site-nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  width: auto;
+  gap: 4px 24px;
+  padding: 0;
+}
+.site-nav a {
+  font-size: 14px;
+  letter-spacing: normal;
+  padding: 0;
+  color: var(--muted);
+}
+.site-nav a[aria-current="page"] { box-shadow: none; }
+.page {
+  max-width: 1360px;
+  padding: 0 clamp(16px, 4vw, 56px) 96px;
+}
+.page-intro {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 32px;
+  padding: clamp(40px, 7vw, 88px) 0 28px;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+.page-heading {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(56px, 10vw, 128px);
+  line-height: .9;
+  letter-spacing: -.02em;
+}
+.press-grid[hidden], .texts-section[hidden] { display: none; }
+.texts-section { margin-top: 0; padding-top: 28px; }
+.section-heading h2, .essay h3 { font-family: var(--serif); letter-spacing: -.02em; }
+.section-heading h2 { font-size: 38px; }
+.press-card h2 { font-family: var(--serif); font-size: 22px; font-style: italic; line-height: 1.25; }
+.press-meta span { font-size: 12px; letter-spacing: .04em; }
+.essay .author { font-size: 14px; }
+.contact-page { max-width: 900px; padding-top: clamp(40px, 7vw, 88px); }
+.contact-lead { font-family: var(--serif); font-size: 26px; line-height: 1.3; letter-spacing: -.02em; }
+.field span { font-size: 14px; letter-spacing: normal; }
+.field input, .field textarea { border-color: var(--line); }
+.language-switch button, .pill-button { font-size: 14px; }
+.pill-button { padding: 10px 24px; }
+:focus-visible { outline-color: var(--nopal); }
+@media (max-width: 560px) {
+  .site-header { flex-direction: column; gap: 10px; }
+  .site-nav { gap: 4px 24px; }
+  .press-card h2 { font-size: 19px; }
+  .press-meta { flex-wrap: wrap; gap: 4px 10px; }
+  .contact-lead { font-size: 23px; }
+}
+
+/* Curatorial texts: introduction and justified reading in both languages. */
+.texts-section .section-heading { align-items: flex-start; }
+.texts-heading { max-width: 720px; }
+.texts-description {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.texts-section .language-switch { flex-shrink: 0; }
+.essay-body p {
+  text-align: justify;
+  text-align-last: start;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+@media (max-width: 640px) {
+  .texts-section .section-heading { flex-wrap: wrap; gap: 24px; }
+}
+
+/* Publication covers: original photography and artwork, no text overlays. */
+.press-card .cover {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background: #efefec;
+  border-radius: 2px;
+}
+.press-card .cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform .5s var(--ease);
+}
+.press-card .cover-instagram { background: var(--paper); }
+.press-card .cover-instagram img { object-fit: contain; }
+.press-card .cover-portrait img { object-position: 64% center; }
+.press-card:hover .cover { transform: none; background: #efefec; }
+.press-card:hover .cover-instagram { background: var(--paper); }
+.press-card:hover .cover img { transform: scale(1.025); }
+.press-card:hover .cover-instagram img { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .press-card:hover .cover img { transform: none; }
+}

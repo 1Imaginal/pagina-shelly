@@ -2,15 +2,18 @@ const currentPage = document.body.dataset.page;
 const header = document.createElement('header');
 header.className = 'site-header';
 header.innerHTML = `<a class="brand" href="index.html" aria-label="Shelly Sarfati — Home">shelly sarfati</a><button class="menu-toggle" aria-expanded="false" aria-controls="main-navigation">menu +</button><nav class="site-nav" id="main-navigation" aria-label="Main navigation"><a href="index.html#statement">statement</a><a href="cv.html" ${currentPage === 'cv' ? 'aria-current="page"' : ''}>cv / bio</a><a href="index.html#work">work</a><a href="press.html" ${currentPage === 'press' ? 'aria-current="page"' : ''}>press</a><a href="contact.html" ${currentPage === 'contact' ? 'aria-current="page"' : ''}>contact</a></nav>`;
+if (currentPage === 'press' || currentPage === 'contact') {
+  header.innerHTML = `<a class="site-name" href="index.html">Shelly Sarfati</a><nav class="site-nav" aria-label="Principal"><a href="index.html#statement">Statement</a><a href="work.html">Work</a><a href="cv.html">CV/Bio</a><a href="press.html" ${currentPage === 'press' ? 'aria-current="page"' : ''}>Press</a><a href="contact.html" ${currentPage === 'contact' ? 'aria-current="page"' : ''}>Contact</a></nav>`;
+}
 document.body.prepend(header);
 const toggle = header.querySelector('button');
-toggle.addEventListener('click', () => {
+if (toggle) toggle.addEventListener('click', () => {
   const open = toggle.getAttribute('aria-expanded') !== 'true';
   toggle.setAttribute('aria-expanded', String(open));
   toggle.textContent = open ? 'close −' : 'menu +';
   header.querySelector('nav').classList.toggle('is-open', open);
 });
-header.addEventListener('keydown', event => { if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { toggle.click(); toggle.focus(); } });
+header.addEventListener('keydown', event => { if (event.key === 'Escape' && toggle && toggle.getAttribute('aria-expanded') === 'true') { toggle.click(); toggle.focus(); } });
 const footer = document.createElement('footer');
 footer.className = 'site-footer';
 footer.innerHTML = `<a class="social-link" href="https://www.instagram.com/shellysarfati/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".7" fill="currentColor" stroke="none"/></svg><span>shellysarfatti</span></a><span class="footer-note">SHELLY SARFATI</span><a class="social-link" href="mailto:shellysarfati@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="1"/><path d="m2 5 10 8L22 5"/></svg><span>shellysarfati@gmail.com</span></a>`;
@@ -66,3 +69,20 @@ if (form) form.addEventListener('submit', async event => {
     status.textContent = 'Your message could not be sent. Please try again or email shellysarfati@gmail.com.';
   } finally { clearTimeout(timer); button.disabled = false; button.textContent = 'Send ↗'; }
 });
+
+// Segmented selector, matching the view switch in WORK.
+if (currentPage === 'press') {
+  const buttons = document.querySelectorAll('[data-press-view]');
+  function selectPressView(view) {
+    const selected = view === 'texts' ? 'texts' : 'publications';
+    buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pressView === selected)));
+    document.querySelector('#publications').hidden = selected !== 'publications';
+    document.querySelector('#texts').hidden = selected !== 'texts';
+  }
+  buttons.forEach(button => button.addEventListener('click', () => {
+    selectPressView(button.dataset.pressView);
+    history.replaceState(null, '', '#' + button.dataset.pressView);
+  }));
+  window.addEventListener('hashchange', () => selectPressView(location.hash.slice(1)));
+  selectPressView(location.hash.slice(1));
+}
