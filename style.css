@@ -324,13 +324,18 @@ a { color: inherit; text-decoration: none; }
     filter: saturate(.85);
 }
 
-/* Párrafos de Statement, Bio y colecciones */
+/* Párrafos de Statement, Bio y colecciones: justificados.
+   hyphens: auto parte palabras largas (según el idioma de la página)
+   para que no queden huecos grandes entre palabras. */
 .statement__texto,
 .bio__texto,
 .coleccion__explicacion {
     max-width: var(--ancho-lectura);
     font-size: var(--texto-cuerpo);
     line-height: var(--interlineado-texto);
+    text-align: justify;
+    -webkit-hyphens: auto;
+            hyphens: auto;
 }
 
 .statement__texto p + p,
