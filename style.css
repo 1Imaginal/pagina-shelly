@@ -5,7 +5,7 @@
    2. Variables del diseño: colores, fuentes, tamaños, espacios
    3. Base
    4. Componentes compartidos (menú, títulos de sección)
-   5. Secciones (inicio, statement, ...)
+   5. Secciones (inicio, statement, bio, colecciones)
    6. Responsive
 
    Regla para el equipo: NO escribir colores, fuentes ni
@@ -64,10 +64,17 @@
     --ancho-maximo:      1200px;                     /* ancho máximo del contenido */
     --ancho-lectura:     38rem;                      /* ancho cómodo para párrafos */
     --alto-menu:         4rem;                       /* para que los anclas no queden bajo el menú */
+    --tope-fijo:         6rem;                       /* distancia al menú de imágenes que se quedan fijas */
+    --espacio-parrafos:  1.4em;                      /* entre párrafos */
 
     /* --- Movimiento --- */
     --transicion-rapida: .3s ease;
     --transicion-suave:  .5s ease;
+
+    /* --- Colecciones: carruseles de obras --- */
+    --carrusel-alto:      clamp(220px, 34vh, 360px);  /* alto de cada obra */
+    --carrusel-espacio:   clamp(1rem, 2vw, 1.6rem);   /* espacio entre obras */
+    --carrusel-velocidad: 40;                         /* píxeles por segundo */
 
     /* --- Inicio: órbita de obras --- */
     --vuelta: 60s;                          /* tiempo de una vuelta completa */
@@ -151,6 +158,39 @@ a { color: inherit; text-decoration: none; }
     letter-spacing: var(--tracking-titulo);
     text-transform: uppercase;
 }
+
+/* Cabecera de sección: título a la izquierda, selector de idioma a la derecha */
+.seccion__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: var(--espacio-titulo);
+}
+
+/* Botón (ej. "Descargar CV"): línea fina, se invierte al pasar el cursor */
+.boton {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .85rem 1.5rem;
+    border: 1px solid var(--color-tinta);
+    font-size: var(--texto-menu);
+    font-weight: var(--peso-regular);
+    letter-spacing: var(--tracking-amplio);
+    text-transform: lowercase;
+    transition: background var(--transicion-rapida), color var(--transicion-rapida);
+}
+
+.boton:hover,
+.boton:focus-visible {
+    background: var(--color-tinta);
+    color: var(--color-fondo);
+}
+
+.boton__icono { transition: transform var(--transicion-rapida); }
+.boton:hover .boton__icono { transform: translateY(2px); }               /* ↓ descargar */
+.boton--ver-mas:hover .boton__icono { transform: translateX(3px); }      /* → ver más */
 
 /* Selector de idioma ES / EN */
 .idioma {
@@ -264,18 +304,10 @@ a { color: inherit; text-decoration: none; }
 /* Recorte de una obra: solo color y textura, sin figura reconocible */
 .statement__textura {
     position: sticky;
-    top: 6rem;
+    top: var(--tope-fijo);
     aspect-ratio: 4 / 5;
     background: var(--color-placeholder) url("img/textura-statement.webp") center / cover no-repeat;
     filter: saturate(.85);
-}
-
-.statement__cabecera {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: var(--espacio-titulo);
 }
 
 .statement__texto {
@@ -284,7 +316,7 @@ a { color: inherit; text-decoration: none; }
     line-height: var(--interlineado-texto);
 }
 
-.statement__texto p + p { margin-top: 1.4em; }
+.statement__texto p + p { margin-top: var(--espacio-parrafos); }
 
 /* Primera frase un poco más presente */
 .statement__texto p:first-child {
@@ -294,12 +326,148 @@ a { color: inherit; text-decoration: none; }
 }
 
 
+/* ===== CV / Bio ===== */
+/* Igual que Statement pero al revés: texto a la izquierda, foto a la derecha */
+.bio {
+    scroll-margin-top: var(--alto-menu);
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--espacio-columnas);
+    align-items: start;
+    max-width: var(--ancho-maximo);
+    margin: 0 auto;
+    padding: var(--espacio-seccion) var(--margen-lateral);
+    border-top: 1px solid var(--color-linea);
+}
+
+.bio__texto {
+    max-width: var(--ancho-lectura);
+    font-size: var(--texto-cuerpo);
+    line-height: var(--interlineado-texto);
+}
+
+.bio__texto p + p { margin-top: var(--espacio-parrafos); }
+
+.bio__texto p:first-child {
+    font-size: var(--texto-entrada);
+    line-height: var(--interlineado-entrada);
+    font-weight: var(--peso-regular);
+}
+
+.bio .boton { margin-top: var(--espacio-titulo); }
+
+.bio__foto {
+    position: sticky;
+    top: var(--tope-fijo);
+    aspect-ratio: 4 / 5;
+    background: var(--color-placeholder);
+    overflow: hidden;
+}
+
+.bio__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* ===== Colecciones (Heme aquí, Cartografías) ===== */
+.coleccion {
+    scroll-margin-top: var(--alto-menu);
+    padding: var(--espacio-seccion) 0;
+    border-top: 1px solid var(--color-linea);
+}
+
+/* Cabecera y pie alineados con el resto del contenido */
+.coleccion__cabecera,
+.coleccion__pie {
+    max-width: var(--ancho-maximo);
+    margin: 0 auto;
+    padding: 0 var(--margen-lateral);
+}
+
+.coleccion__cabecera { margin-bottom: var(--espacio-titulo); }
+
+/* Aquí el título lleva debajo el dato y la explicación, no necesita margen extra */
+.coleccion .seccion__cabecera { margin-bottom: 0; }
+
+.coleccion__dato {
+    margin-top: .8rem;
+    font-size: var(--texto-pequeno);
+    letter-spacing: var(--tracking-amplio);
+    text-transform: lowercase;
+    color: var(--color-gris);
+}
+
+.coleccion__explicacion {
+    max-width: var(--ancho-lectura);
+    margin-top: 1.4rem;
+    font-size: var(--texto-cuerpo);
+    line-height: var(--interlineado-texto);
+}
+
+.coleccion__pie { margin-top: var(--espacio-titulo); }
+
+/* Carrusel: ocupa todo el ancho de la pantalla y se desvanece en las orillas */
+.carrusel {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.carrusel__pista {
+    display: flex;
+    gap: var(--carrusel-espacio);
+    width: max-content;
+}
+
+/* El movimiento empieza cuando el script terminó de rellenar la pista */
+.carrusel--listo .carrusel__pista {
+    animation: carrusel-izquierda var(--carrusel-duracion) linear infinite;
+}
+
+.carrusel--listo[data-direccion="derecha"] .carrusel__pista {
+    animation-name: carrusel-derecha;
+}
+
+.carrusel__obra {
+    flex: none;
+    height: var(--carrusel-alto);
+    background: var(--color-placeholder);
+    overflow: hidden;
+}
+
+.carrusel__obra img {
+    height: 100%;
+    width: auto;
+    display: block;
+    transition: scale var(--transicion-suave);
+}
+
+.carrusel__obra:hover img { scale: 1.04; }
+
+@keyframes carrusel-izquierda {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(var(--carrusel-recorrido) * -1)); }
+}
+
+@keyframes carrusel-derecha {
+    from { transform: translateX(calc(var(--carrusel-recorrido) * -1)); }
+    to   { transform: translateX(0); }
+}
+
+
 /* ---------- 6. RESPONSIVE ---------- */
 
 /* Accesibilidad: sin movimiento si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
     .orbita, .obra__marco { animation: none; }
     html { scroll-behavior: auto; }
+
+    /* Sin animación, el carrusel se recorre a mano */
+    .carrusel { overflow-x: auto; }
+    .carrusel--listo .carrusel__pista { animation: none; }
 }
 
 /* Móvil */
@@ -308,12 +476,20 @@ a { color: inherit; text-decoration: none; }
         --orbita:     74vw;
         --obra:       calc(var(--orbita) * 0.22);
         --alto-menu:  6rem;   /* el menú ocupa dos líneas */
+        --carrusel-alto: 200px;
     }
 
     .menu { flex-direction: column; gap: .8rem; }
     .menu__links { gap: 1rem; font-size: 0.7rem; }
 
-    .statement { grid-template-columns: 1fr; }
+    .statement,
+    .bio { grid-template-columns: 1fr; }
+
+    /* En móvil la foto va arriba del texto */
+    .bio__foto {
+        position: static;
+        order: -1;
+    }
     .statement__textura {
         position: static;
         aspect-ratio: 16 / 9;
