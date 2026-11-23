@@ -62,7 +62,7 @@
         <div class="statement__textura" role="img" aria-label="Detalle de textura de una obra de Shelly"></div>
 
         <div class="statement__contenido">
-            <div class="statement__cabecera">
+            <div class="seccion__cabecera">
                 <h2 class="seccion__titulo">Statement</h2>
                 <div class="idioma" role="group" aria-label="Idioma">
                     <button type="button" data-idioma="es" aria-pressed="true">ES</button>
@@ -84,20 +84,223 @@
             </div>
         </div>
     </section>
+
+    <!-- CV / BIO -->
+    <section class="bio" id="bio">
+        <div class="bio__contenido">
+            <div class="seccion__cabecera">
+                <h2 class="seccion__titulo">CV / Bio</h2>
+                <div class="idioma" role="group" aria-label="Idioma">
+                    <button type="button" data-idioma="es" aria-pressed="true">ES</button>
+                    <span aria-hidden="true">/</span>
+                    <button type="button" data-idioma="en" aria-pressed="false">EN</button>
+                </div>
+            </div>
+
+            <div class="bio__texto" lang="es" data-texto="es">
+                <p>Shelly Sarfati (Ciudad de México) es una artista visual cuya obra explora la dualidad entre lo figurativo y lo abstracto, abordando temas como la simbiosis, la identidad y los procesos de inserción cultural. Su práctica se inspira en símbolos como el cactus, elemento que alude tanto a sus raíces como a las ideas de injerto, adaptación y resistencia.</p>
+                <p>Inició sus estudios en la Universidad Anáhuac y más tarde en el Instituto de Arte y Diseño Shenkar. Ha complementado su formación con cursos y diplomados en mercadotecnia visual en la Universidad Janet Klein, además de participar en talleres con las artistas visuales Mercedes Arellano y Eugenia Orozco. De manera reciente, culminó un programa de tutorías con el curador y crítico David Mateo y el artista Arturo Montoto, en un proyecto de intercambio entre México y Cuba.</p>
+                <p>Su obra ha sido presentada en espacios culturales de relevancia, como el Polyforum Cultural Siqueiros, donde participó en dos exposiciones colectivas junto a artistas consolidados. También ha expuesto en Ethos Arte y Mujer Técnica Mixta, fue invitada a exponer en el Centro de Arte Bernardo Quintana Arrioja (CABQA) en Querétaro y en diversos foros institucionales e independientes. En 2025 fue seleccionada en la XX Bienal de Pintura Rufino Tamayo, y actualmente su obra forma parte de la exposición itinerante de la bienal, que se presenta en el Museo de las Culturas de Oaxaca.</p>
+                <p>A través de su trabajo, Shelly Sarfati continúa indagando en la intersección entre memoria, identidad y transformación, desarrollando una práctica artística que busca tender puentes entre lo personal y lo colectivo.</p>
+            </div>
+
+            <div class="bio__texto" lang="en" data-texto="en" hidden>
+                <p>Shelly Sarfati (Mexico City) is a visual artist whose work navigates the tension between figuration and abstraction, engaging with themes such as symbiosis, identity, and cultural insertion. A central symbol in her practice is the cactus, which embodies both her roots and broader ideas of grafting, adaptation, and resilience.</p>
+                <p>She began her studies at Universidad Anáhuac and later at the Instituto de Arte y Diseño Shenkar. Her training has been enriched through courses and diplomas in visual marketing at Universidad Janet Klein, as well as workshops with artists Mercedes Arellano and Eugenia Orozco. Most recently, she completed a mentorship program with curator and critic David Mateo and artist Arturo Montoto, developed through an exchange project between Mexico and Cuba.</p>
+                <p>Her work has been shown in relevant cultural spaces such as the Polyforum Cultural Siqueiros, where she participated in two group exhibitions alongside established artists. She has also exhibited at Ethos Arte, Mujer Técnica Mixta, and was invited to present at the Centro de Arte Bernardo Quintana Arrioja (CABQA) in Querétaro, as well as in a variety of institutional and independent forums. In 2025, she was selected for the XX Rufino Tamayo Painting Biennial, and her work is currently part of the traveling exhibition presented at the Museo de las Culturas de Oaxaca.</p>
+                <p>Through her practice, Shelly Sarfati continues to explore the intersections of memory, identity, and transformation, developing a body of work that seeks to build bridges between the personal and the collective.</p>
+            </div>
+
+            <!-- El CV está en cv/shelly-sarfati-cv.pdf -->
+            <a class="boton" href="cv/shelly-sarfati-cv.pdf" download="Shelly-Sarfati-CV.pdf">
+                <span data-texto="es">Descargar CV</span>
+                <span data-texto="en" hidden>Download CV</span>
+                <span class="boton__icono" aria-hidden="true">↓</span>
+            </a>
+        </div>
+
+        <!-- Foto de Shelly: guarda la imagen como img/shelly.jpg -->
+        <figure class="bio__foto">
+            <img src="img/shelly.avif" alt="Retrato de Shelly Sarfati" onerror="this.remove()">
+        </figure>
+    </section>
+
+    <!-- ========== COLECCIONES ==========
+         Cada colección tiene un carrusel que se mueve solo.
+         Para agregar una obra, copia un bloque <a class="carrusel__obra"> dentro de
+         .carrusel__pista y cambia la imagen y el texto alt (título, año).
+         No hace falta repetirlas: el carrusel se rellena solo para no dejar huecos.
+         data-direccion="derecha" o "izquierda" decide hacia dónde se mueve. -->
+
+    <!-- HEME AQUÍ -->
+    <section class="coleccion" id="heme-aqui">
+        <div class="coleccion__cabecera">
+            <div class="seccion__cabecera">
+                <h2 class="seccion__titulo">Heme aquí</h2>
+                <div class="idioma" role="group" aria-label="Idioma">
+                    <button type="button" data-idioma="es" aria-pressed="true">ES</button>
+                    <span aria-hidden="true">/</span>
+                    <button type="button" data-idioma="en" aria-pressed="false">EN</button>
+                </div>
+            </div>
+            <p class="coleccion__dato">
+                <span data-texto="es">Exposición individual · CABQA, Querétaro · 2025</span>
+                <span data-texto="en" hidden>Solo exhibition · CABQA, Querétaro · 2025</span>
+            </p>
+            <p class="coleccion__explicacion">
+                <span data-texto="es">Es una serie en donde se utiliza la figura del cactus como objeto simbólico. Más allá de su aspecto natural, este elemento se convierte en una herramienta para explorar temas de identidad, adaptación y resistencia.</span>
+                <span data-texto="en" hidden>A collection that takes the cactus as a symbolic figure. Beyond its natural appearance, it becomes a tool to address questions of identity, adaptation, and resilience.</span>
+            </p>
+        </div>
+
+        <div class="carrusel" data-direccion="derecha">
+            <div class="carrusel__pista">
+                    <a class="carrusel__obra" href="heme-aqui.html">
+                        <img src="img/heme/heme1.avif" alt="Obra 1, colección Heme aquí">
+                    </a>
+                    <a class="carrusel__obra" href="heme-aqui.html">
+                        <img src="img/heme/heme2.avif" alt="Obra 3, colección Heme aquí">
+                    </a>
+                    <a class="carrusel__obra" href="heme-aqui.html">
+                        <img src="img/heme/heme3.avif" alt="Obra 5, colección Heme aquí">
+                    </a>
+                    <a class="carrusel__obra" href="heme-aqui.html">
+                        <img src="img/heme/heme4.avif" alt="Obra 2, colección Heme aquí">
+                    </a>
+                    <a class="carrusel__obra" href="heme-aqui.html">
+                        <img src="img/heme/heme5.avif" alt="Obra 4, colección Heme aquí">
+                    </a>
+                    <a class="carrusel__obra" href="heme-aqui.html">
+                        <img src="img/heme/heme6.avif" alt="Obra 6, colección Heme aquí">
+                    </a>
+            </div>
+        </div>
+
+        <div class="coleccion__pie">
+            <a class="boton boton--ver-mas" href="heme-aqui.html">
+                <span data-texto="es">Ver más</span>
+                <span data-texto="en" hidden>See more</span>
+                <span class="boton__icono" aria-hidden="true">→</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- CARTOGRAFÍAS -->
+    <section class="coleccion" id="cartografias">
+        <div class="coleccion__cabecera">
+            <div class="seccion__cabecera">
+                <h2 class="seccion__titulo">Cartografías de un ser incompleto</h2>
+                <div class="idioma" role="group" aria-label="Idioma">
+                    <button type="button" data-idioma="es" aria-pressed="true">ES</button>
+                    <span aria-hidden="true">/</span>
+                    <button type="button" data-idioma="en" aria-pressed="false">EN</button>
+                </div>
+            </div>
+            <p class="coleccion__explicacion">
+                <span data-texto="es">Es una colección que explora la tensión entre lo que se construye y lo que se deconstruye. A partir de fragmentos, recortes y sustracciones, las obras generan cuerpos híbridos que nunca terminan de cerrarse del todo. En ellos conviven figuras que remiten a lo humano y otras más abstractas, pero todas comparten la misma búsqueda: mostrar cómo la identidad se conforma en un estado permanente de ensamblaje, movimiento y reinterpretación.</span>
+                <span data-texto="en" hidden>It is a collection that delves into the tension between construction and deconstruction. Through fragments, cuts, and subtractions, the works give rise to hybrid bodies that never fully resolve themselves. Within them, human-like figures coexist with more abstract forms, yet all share the same pursuit: to reveal identity as something in constant flux—an open process of assembly, movement, and reinterpretation.</span>
+            </p>
+        </div>
+
+        <div class="carrusel" data-direccion="izquierda">
+            <div class="carrusel__pista">
+                    <a class="carrusel__obra" href="cartografias.html">
+                        <img src="img/cartografias/cartografias1.jpg" alt="Obra 4, colección Cartografías">
+                    </a>
+                    <a class="carrusel__obra" href="cartografias.html">
+                        <img src="img/cartografias/cartografias2.jpg" alt="Obra 2, colección Cartografías">
+                    </a>
+                    <a class="carrusel__obra" href="cartografias.html">
+                        <img src="img/cartografias/cartografias3.jpg" alt="Obra 5, colección Cartografías">
+                    </a>
+                    <a class="carrusel__obra" href="cartografias.html">
+                        <img src="img/cartografias/cartografias4.jpg" alt="Obra 1, colección Cartografías">
+                    </a>
+                    <a class="carrusel__obra" href="cartografias.html">
+                        <img src="img/cartografias/cartografias5.jpg" alt="Obra 3, colección Cartografías">
+                    </a>
+                    <a class="carrusel__obra" href="cartografias.html">
+                        <img src="img/cartografias/cartografias6.jpg" alt="Obra 6, colección Cartografías">
+                    </a>
+            </div>
+        </div>
+
+        <div class="coleccion__pie">
+            <a class="boton boton--ver-mas" href="cartografias.html">
+                <span data-texto="es">Ver más</span>
+                <span data-texto="en" hidden>See more</span>
+                <span class="boton__icono" aria-hidden="true">→</span>
+            </a>
+        </div>
+    </section>
     </main>
 
     <script>
-        // Cambio de idioma del statement (ES / EN)
+        // Cambio de idioma (ES / EN): un clic cambia todas las secciones a la vez
         document.querySelectorAll('.idioma button').forEach(function (boton) {
             boton.addEventListener('click', function () {
                 var idioma = boton.dataset.idioma;
                 document.querySelectorAll('.idioma button').forEach(function (b) {
-                    b.setAttribute('aria-pressed', b === boton);
+                    b.setAttribute('aria-pressed', b.dataset.idioma === idioma);
                 });
                 document.querySelectorAll('[data-texto]').forEach(function (bloque) {
                     bloque.hidden = bloque.dataset.texto !== idioma;
                 });
+                document.documentElement.lang = idioma;
             });
+        });
+
+        // Carruseles de colecciones: rellena la pista con copias de las obras
+        // para que el movimiento sea continuo y sin huecos.
+        function armarCarrusel(carrusel) {
+            var pista = carrusel.querySelector('.carrusel__pista');
+
+            // Volver a las obras originales (por si se reconstruye al cambiar el tamaño)
+            pista.querySelectorAll('[data-copia]').forEach(function (c) { c.remove(); });
+            var originales = Array.from(pista.children);
+            if (!originales.length) return;
+
+            // Si el usuario pidió menos movimiento, no se anima (se recorre a mano)
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            function copiar(obra) {
+                var copia = obra.cloneNode(true);
+                copia.setAttribute('data-copia', '');
+                copia.setAttribute('aria-hidden', 'true');
+                copia.setAttribute('tabindex', '-1');
+                pista.appendChild(copia);
+            }
+
+            // 1) Repetir hasta que un "grupo" sea al menos tan ancho como la pantalla
+            var espacio = parseFloat(getComputedStyle(pista).columnGap) || 0;
+            var anchoGrupo = function () { return pista.scrollWidth + espacio; };
+            var vueltas = 0;
+            while (anchoGrupo() < carrusel.clientWidth && vueltas < 20) {
+                originales.forEach(copiar);
+                vueltas++;
+            }
+
+            // 2) Duplicar el grupo completo: la animación recorre exactamente la mitad
+            var grupo = anchoGrupo();
+            Array.from(pista.children).forEach(copiar);
+
+            // Velocidad constante (px por segundo) sin importar cuántas obras haya
+            var velocidad = parseFloat(getComputedStyle(carrusel).getPropertyValue('--carrusel-velocidad')) || 40;
+            pista.style.setProperty('--carrusel-recorrido', grupo + 'px');
+            pista.style.setProperty('--carrusel-duracion', (grupo / velocidad) + 's');
+            carrusel.classList.add('carrusel--listo');
+        }
+
+        function armarCarruseles() {
+            document.querySelectorAll('.carrusel').forEach(armarCarrusel);
+        }
+
+        // Esperar a que carguen las imágenes para medir bien su ancho
+        window.addEventListener('load', armarCarruseles);
+        var esperaResize;
+        window.addEventListener('resize', function () {
+            clearTimeout(esperaResize);
+            esperaResize = setTimeout(armarCarruseles, 200);
         });
     </script>
 </body>
