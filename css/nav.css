@@ -1,0 +1,86 @@
+/* =========================================================
+   MENÚ COMPARTIDO — todas las páginas
+   ---------------------------------------------------------
+   Es el único lugar donde se define cómo se ve el menú.
+   Cambiar algo aquí lo cambia en todo el sitio.
+
+   Debe cargarse DESPUÉS de las demás hojas de estilo
+   para que ninguna lo sobrescriba.
+
+   Dónde está el HTML del menú:
+   - index.html y work.html → escrito en el HTML
+   - cv.html, press.html, contact.html → lo genera shared.js
+   Si cambian un enlace, cámbienlo en esos tres lugares.
+   ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap");
+
+.site-header {
+  --nav-tinta: #1d1d1b;
+  --nav-gris:  #7d7b75;
+  --nav-linea: rgba(29, 29, 27, .14);
+  --nav-serif: 'Newsreader', Georgia, serif;
+  --nav-sans:  'Archivo', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Sticky: se queda arriba al hacer scroll */
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  margin: 0;
+  padding: 22px clamp(16px, 4vw, 56px);
+  border-bottom: 1px solid var(--nav-linea);
+  background: inherit;   /* mismo color de fondo que la página, para tapar lo que pasa por debajo */
+  color: var(--nav-tinta);
+  font-family: var(--nav-sans);
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.site-name {
+  font-family: var(--nav-serif);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  text-decoration: none;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.site-nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  width: auto;
+  gap: 4px 24px;
+  padding: 0;
+  font-size: 14px;
+}
+
+.site-nav a {
+  font-size: 14px;
+  letter-spacing: normal;
+  text-transform: none;
+  padding: 0;
+  text-decoration: none;
+  color: var(--nav-gris);
+  box-shadow: none;
+  transition: color .2s;
+}
+
+/* Página actual (aria-current="page") o, en el inicio,
+   la sección que se está viendo (aria-current="location") */
+.site-nav a:hover,
+.site-nav a[aria-current] { color: var(--nav-tinta); box-shadow: none; }
+
+@media (max-width: 560px) {
+  .site-header { flex-direction: column; gap: 10px; }
+}

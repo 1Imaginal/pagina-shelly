@@ -1,29 +1,6 @@
 /* PRESS / CONTACT use the same Newsreader + Archivo system as WORK.
    Loaded after styles.css and css/work.css; WORK and CV remain unchanged. */
-.site-header {
-  position: static;
-  min-height: 0;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  gap: 24px;
-  padding: 22px clamp(16px, 4vw, 56px);
-}
-.site-nav {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: baseline;
-  width: auto;
-  gap: 4px 24px;
-  padding: 0;
-}
-.site-nav a {
-  font-size: 14px;
-  letter-spacing: normal;
-  padding: 0;
-  color: var(--muted);
-}
-.site-nav a[aria-current="page"] { box-shadow: none; }
+/* Menú: está en css/nav.css (compartido por todas las páginas). */
 .page {
   max-width: 1360px;
   padding: 0 clamp(16px, 4vw, 56px) 96px;
@@ -58,8 +35,6 @@
 .pill-button { padding: 10px 24px; }
 :focus-visible { outline-color: var(--nopal); }
 @media (max-width: 560px) {
-  .site-header { flex-direction: column; gap: 10px; }
-  .site-nav { gap: 4px 24px; }
   .press-card h2 { font-size: 19px; }
   .press-meta { flex-wrap: wrap; gap: 4px 10px; }
   .contact-lead { font-size: 23px; }

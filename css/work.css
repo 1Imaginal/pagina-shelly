@@ -36,19 +36,7 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--nopal); outline-offset: 3px; }
 
 /* ---------- Menú ---------- */
-.site-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 24px;
-  padding: 22px clamp(16px, 4vw, 56px);
-  border-bottom: 1px solid var(--line);
-}
-.site-name { font-family: var(--serif); font-size: 22px; text-decoration: none; }
-.site-nav { display: flex; flex-wrap: wrap; gap: 4px 24px; font-size: 14px; }
-.site-nav a { text-decoration: none; color: var(--muted); }
-.site-nav a:hover,
-.site-nav a[aria-current="page"] { color: var(--ink); }
+/* Está en css/nav.css (compartido por todas las páginas). */
 
 /* ---------- Encabezado de Work ---------- */
 .work { padding: 0 clamp(16px, 4vw, 56px) 96px; max-width: 1360px; margin: 0 auto; }
@@ -306,7 +294,6 @@ a { color: inherit; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 560px) {
-  .site-header { flex-direction: column; gap: 10px; }
   .grid { grid-template-columns: 1fr; }
   .room { --bw-l: 9%; --bw-r: 91%; --bw-t: 14%; --bw-b: 66%; }
   .arrow { top: auto; bottom: 18px; margin-top: 0; }

@@ -1,12 +1,17 @@
 /* =========================================================
-   SHELLY — Hoja de estilos
+   SHELLY — Hoja de estilos del inicio (index.html)
    ---------------------------------------------------------
    1. Tipografías (se cargan aquí, no hace falta otro <link>)
    2. Variables del diseño: colores, fuentes, tamaños, espacios
    3. Base
-   4. Componentes compartidos (menú, títulos de sección)
+   4. Componentes compartidos (títulos, botones, idioma, pausa)
    5. Secciones (inicio, statement, bio, colecciones)
-   6. Responsive
+   6. Pie de página
+   7. Responsive
+
+   Usa el mismo sistema visual que las demás páginas
+   (Newsreader + Archivo, fondo #fbfbf9, botones redondeados).
+   El menú está en css/nav.css.
 
    Regla para el equipo: NO escribir colores, fuentes ni
    tamaños “a mano” en las secciones. Usar siempre las
@@ -15,60 +20,57 @@
 
 
 /* ---------- 1. TIPOGRAFÍAS ---------- */
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap");
 
 
 /* ---------- 2. VARIABLES DEL DISEÑO ---------- */
 :root {
 
-    /* --- Colores --- */
-    --color-fondo:        #f7f5f1;   /* hueso, fondo general */
-    --color-tinta:        #141414;   /* texto principal y títulos */
-    --color-gris:         #8a8780;   /* texto secundario, enlaces inactivos */
-    --color-placeholder:  #e4e1da;   /* cajas vacías mientras carga una imagen */
-    --color-linea:        rgba(20, 20, 20, .12);     /* separadores */
-    --color-menu-fondo:   rgba(247, 245, 241, .88);  /* fondo translúcido del menú */
+    /* --- Colores (los mismos de Work, Press y Contact) --- */
+    --color-fondo:        #fbfbf9;   /* fondo general */
+    --color-tinta:        #1d1d1b;   /* texto principal y títulos */
+    --color-gris:         #6b6862;   /* texto secundario (contraste 5.4:1 sobre el fondo) */
+    --color-placeholder:  #efefec;   /* cajas vacías mientras carga una imagen */
+    --color-linea:        rgba(29, 29, 27, .14);     /* separadores */
     --color-sombra:       rgba(0, 0, 0, .35);
 
     /* --- Familias tipográficas --- */
-    --fuente-titulos: "Syne", system-ui, sans-serif;   /* nombre, logo, títulos */
-    --fuente-texto:   "Inter", system-ui, sans-serif;  /* párrafos, menú, botones */
+    --fuente-titulos: "Newsreader", Georgia, serif;                   /* nombre, títulos, frases destacadas */
+    --fuente-texto:   "Archivo", "Helvetica Neue", Arial, sans-serif; /* párrafos, botones, etiquetas */
 
     /* --- Pesos --- */
-    --peso-light:     300;
-    --peso-regular:   400;
-    --peso-bold:      700;
-    --peso-extrabold: 800;
+    --peso-texto:     400;
+    --peso-medio:     500;
 
     /* --- Tamaños de letra --- */
-    --texto-nombre:   clamp(2.6rem, 9vmin, 6rem);    /* "SHELLY" en el inicio */
-    --texto-titulo:   clamp(1.6rem, 3.2vw, 2.4rem);  /* títulos de sección */
-    --texto-entrada:  1.15em;                        /* primer párrafo destacado */
-    --texto-cuerpo:   clamp(1rem, 1.15vw, 1.1rem);   /* párrafos */
-    --texto-logo:     0.95rem;
-    --texto-menu:     0.78rem;
-    --texto-pequeno:  0.72rem;                       /* etiquetas, ES / EN */
+    --texto-nombre:    clamp(2.6rem, 7vmin, 4.75rem);  /* "Shelly Sarfati" en el inicio */
+    --texto-titulo:    clamp(2.4rem, 4.5vw, 3.75rem);  /* títulos de sección */
+    --texto-entrada:   clamp(1.3rem, 1.7vw, 1.55rem);  /* primer párrafo destacado (serif) */
+    --texto-cuerpo:    clamp(1rem, 1.1vw, 1.0625rem);  /* párrafos */
+    --texto-boton:     14px;                           /* botones y selector de idioma */
+    --texto-etiqueta:  11px;                           /* etiquetas en mayúsculas */
+    --texto-pie:       12px;                           /* pie de página */
 
     /* --- Interlineado y espaciado de letras --- */
     --interlineado-texto:   1.8;
-    --interlineado-entrada: 1.65;
-    --tracking-amplio:      0.14em;   /* menú y etiquetas */
-    --tracking-titulo:      0.04em;
-    --tracking-nombre:      0.02em;
+    --interlineado-entrada: 1.45;
+    --interlineado-titulo:  1.05;
+    --tracking-etiqueta:    0.18em;   /* etiquetas en mayúsculas */
+    --tracking-titulo:      -0.02em;  /* títulos serif */
 
     /* --- Espacios --- */
-    --margen-lateral:    clamp(1.2rem, 4vw, 3rem);   /* márgenes izquierdo/derecho */
+    --margen-lateral:    clamp(16px, 4vw, 56px);     /* igual que el menú */
     --espacio-seccion:   clamp(5rem, 12vh, 8rem);    /* arriba/abajo de cada sección */
     --espacio-columnas:  clamp(2rem, 6vw, 6rem);     /* entre imagen y texto */
     --espacio-titulo:    clamp(1.8rem, 4vw, 3rem);   /* debajo de un título */
+    --espacio-parrafos:  1.4em;                      /* entre párrafos */
     --ancho-maximo:      1200px;                     /* ancho máximo del contenido */
     --ancho-lectura:     38rem;                      /* ancho cómodo para párrafos */
-    --alto-menu:         4rem;                       /* para que los anclas no queden bajo el menú */
-    --tope-fijo:         6rem;                       /* distancia al menú de imágenes que se quedan fijas */
-    --espacio-parrafos:  1.4em;                      /* entre párrafos */
+    --alto-menu:         78px;                       /* alto del menú (el script lo mide) */
+    --tope-fijo:         calc(var(--alto-menu) + 2.5rem); /* imágenes fijas: debajo del menú */
 
     /* --- Movimiento --- */
-    --transicion-rapida: .3s ease;
+    --transicion-rapida: .25s ease;
     --transicion-suave:  .5s ease;
 
     /* --- Colecciones: carruseles de obras --- */
@@ -86,99 +88,74 @@
 /* ---------- 3. BASE ---------- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--alto-menu);   /* los anclas (#statement, #bio...) no quedan bajo el menú */
+}
 
 body {
     background: var(--color-fondo);
     color: var(--color-tinta);
     font-family: var(--fuente-texto);
-    font-weight: var(--peso-light);
+    font-weight: var(--peso-texto);
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
 }
 
 a { color: inherit; text-decoration: none; }
 
+:focus-visible { outline: 2px solid var(--color-tinta); outline-offset: 4px; }
+
+/* Texto solo para lectores de pantalla */
+.visualmente-oculto {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 
 /* ---------- 4. COMPONENTES COMPARTIDOS ---------- */
 
-/* Menú */
-.menu {
-    position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.4rem var(--margen-lateral);
-    font-size: var(--texto-menu);
-    letter-spacing: var(--tracking-amplio);
-    text-transform: lowercase;
-    background: var(--color-menu-fondo);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-.menu__logo {
-    font-family: var(--fuente-titulos);
-    font-weight: var(--peso-bold);
-    font-size: var(--texto-logo);
-    letter-spacing: var(--tracking-titulo);
-}
-
-.menu__links {
-    display: flex;
-    gap: clamp(1rem, 2.5vw, 2.2rem);
-}
-
-.menu__links a {
-    position: relative;
-    color: var(--color-gris);
-    transition: color var(--transicion-rapida);
-}
-
-.menu__links a::after {
-    content: "";
-    position: absolute;
-    left: 0; bottom: -4px;
-    width: 100%; height: 1px;
-    background: var(--color-tinta);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform .35s ease;
-}
-
-.menu__links a:hover { color: var(--color-tinta); }
-.menu__links a:hover::after { transform: scaleX(1); }
-
-/* Títulos de sección (Statement, CV / Bio, Cartografías...) */
+/* Títulos de sección (Statement, CV / Bio, colecciones) */
 .seccion__titulo {
     font-family: var(--fuente-titulos);
-    font-weight: var(--peso-bold);
+    font-weight: 400;
     font-size: var(--texto-titulo);
+    line-height: var(--interlineado-titulo);
     letter-spacing: var(--tracking-titulo);
-    text-transform: uppercase;
 }
 
 /* Cabecera de sección: título a la izquierda, selector de idioma a la derecha */
 .seccion__cabecera {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: var(--espacio-titulo);
 }
 
-/* Botón (ej. "Descargar CV"): línea fina, se invierte al pasar el cursor */
+/* Etiqueta pequeña en mayúsculas (ej. "Solo exhibition · CABQA") */
+.etiqueta {
+    font-size: var(--texto-etiqueta);
+    letter-spacing: var(--tracking-etiqueta);
+    text-transform: uppercase;
+    color: var(--color-gris);
+}
+
+/* Botón redondeado, igual que en las demás páginas */
 .boton {
     display: inline-flex;
     align-items: center;
-    gap: .8rem;
-    padding: .85rem 1.5rem;
+    gap: .75rem;
+    padding: 10px 24px;
     border: 1px solid var(--color-tinta);
-    font-size: var(--texto-menu);
-    font-weight: var(--peso-regular);
-    letter-spacing: var(--tracking-amplio);
-    text-transform: lowercase;
+    border-radius: 999px;
+    font-size: var(--texto-boton);
+    font-weight: var(--peso-texto);
     transition: background var(--transicion-rapida), color var(--transicion-rapida);
 }
 
@@ -189,31 +166,61 @@ a { color: inherit; text-decoration: none; }
 }
 
 .boton__icono { transition: transform var(--transicion-rapida); }
-.boton:hover .boton__icono { transform: translateY(2px); }               /* ↓ descargar */
-.boton--ver-mas:hover .boton__icono { transform: translateX(3px); }      /* → ver más */
+.boton--ver-mas:hover .boton__icono { transform: translateX(3px); }
 
-/* Selector de idioma ES / EN */
+/* Selector de idioma, igual que en CV / Bio (English / Español) */
 .idioma {
     display: flex;
-    gap: .45rem;
-    font-size: var(--texto-pequeno);
-    letter-spacing: var(--tracking-amplio);
-    color: var(--color-gris);
+    gap: 5px;
 }
 
 .idioma button {
     font: inherit;
-    letter-spacing: inherit;
-    color: inherit;
+    font-size: var(--texto-boton);
+    color: var(--color-gris);
     background: none;
-    border: 0;
+    border: 1px solid transparent;
+    border-radius: 30px;
+    padding: 7px 13px;
     cursor: pointer;
-    padding: .2rem 0;
-    transition: color var(--transicion-rapida);
+    transition: color var(--transicion-rapida), border-color var(--transicion-rapida);
 }
 
-.idioma button:hover,
-.idioma button[aria-pressed="true"] { color: var(--color-tinta); }
+.idioma button:hover { color: var(--color-tinta); }
+
+.idioma button[aria-pressed="true"] {
+    color: var(--color-tinta);
+    border-color: var(--color-tinta);
+}
+
+/* Botón para pausar todo el movimiento (órbita y carruseles) */
+.pausa {
+    position: fixed;
+    right: var(--margen-lateral);
+    bottom: 20px;
+    z-index: 15;   /* debajo del menú (20) */
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: 8px 16px;
+    font: inherit;
+    font-size: 13px;
+    color: var(--color-tinta);
+    background: var(--color-fondo);
+    border: 1px solid var(--color-linea);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color var(--transicion-rapida);
+}
+
+.pausa:hover { border-color: var(--color-tinta); }
+
+/* Con el movimiento pausado, todo se detiene donde está */
+.movimiento-pausado .orbita,
+.movimiento-pausado .obra__marco,
+.movimiento-pausado .carrusel__pista {
+    animation-play-state: paused !important;
+}
 
 
 /* ---------- 5. SECCIONES ---------- */
@@ -221,23 +228,30 @@ a { color: inherit; text-decoration: none; }
 /* ===== Inicio ===== */
 .inicio {
     position: relative;
-    height: 100vh;
-    height: 100svh;
+    height: calc(100vh - var(--alto-menu));
+    height: calc(100svh - var(--alto-menu));
     display: grid;
     place-items: center;
     overflow: hidden;
 }
 
-.inicio__nombre {
+.inicio__presentacion {
     position: relative;
     z-index: 2;
-    font-family: var(--fuente-titulos);
-    font-weight: var(--peso-extrabold);
-    font-size: var(--texto-nombre);
-    letter-spacing: var(--tracking-nombre);
-    text-transform: uppercase;
+    text-align: center;
     pointer-events: none;
 }
+
+.inicio__nombre {
+    font-family: var(--fuente-titulos);
+    font-weight: 400;
+    font-size: var(--texto-nombre);
+    line-height: 1;
+    letter-spacing: var(--tracking-titulo);
+    white-space: nowrap;
+}
+
+.inicio__oficio { margin-top: 1rem; }
 
 /* Órbita */
 .orbita {
@@ -279,7 +293,8 @@ a { color: inherit; text-decoration: none; }
 
 /* Al pasar el cursor la obra se acerca un poco, sin detener el giro.
    Se usa "scale" (no "transform") para no chocar con la animación. */
-.obra:hover .obra__marco {
+.obra:hover .obra__marco,
+.obra:focus-visible .obra__marco {
     scale: 1.08;
     box-shadow: 0 18px 40px -18px var(--color-sombra);
 }
@@ -290,7 +305,6 @@ a { color: inherit; text-decoration: none; }
 
 /* ===== Statement ===== */
 .statement {
-    scroll-margin-top: var(--alto-menu);
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: var(--espacio-columnas);
@@ -310,26 +324,29 @@ a { color: inherit; text-decoration: none; }
     filter: saturate(.85);
 }
 
-.statement__texto {
+/* Párrafos de Statement, Bio y colecciones */
+.statement__texto,
+.bio__texto,
+.coleccion__explicacion {
     max-width: var(--ancho-lectura);
     font-size: var(--texto-cuerpo);
     line-height: var(--interlineado-texto);
 }
 
-.statement__texto p + p { margin-top: var(--espacio-parrafos); }
+.statement__texto p + p,
+.bio__texto p + p { margin-top: var(--espacio-parrafos); }
 
-/* Primera frase un poco más presente */
-.statement__texto p:first-child {
+/* Primera frase en serif, más presente */
+.statement__texto p:first-child,
+.bio__texto p:first-child {
+    font-family: var(--fuente-titulos);
     font-size: var(--texto-entrada);
     line-height: var(--interlineado-entrada);
-    font-weight: var(--peso-regular);
 }
-
 
 /* ===== CV / Bio ===== */
 /* Igual que Statement pero al revés: texto a la izquierda, foto a la derecha */
 .bio {
-    scroll-margin-top: var(--alto-menu);
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: var(--espacio-columnas);
@@ -340,21 +357,12 @@ a { color: inherit; text-decoration: none; }
     border-top: 1px solid var(--color-linea);
 }
 
-.bio__texto {
-    max-width: var(--ancho-lectura);
-    font-size: var(--texto-cuerpo);
-    line-height: var(--interlineado-texto);
+.bio__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: var(--espacio-titulo);
 }
-
-.bio__texto p + p { margin-top: var(--espacio-parrafos); }
-
-.bio__texto p:first-child {
-    font-size: var(--texto-entrada);
-    line-height: var(--interlineado-entrada);
-    font-weight: var(--peso-regular);
-}
-
-.bio .boton { margin-top: var(--espacio-titulo); }
 
 .bio__foto {
     position: sticky;
@@ -371,10 +379,8 @@ a { color: inherit; text-decoration: none; }
     display: block;
 }
 
-
 /* ===== Colecciones (Heme aquí, Cartografías) ===== */
 .coleccion {
-    scroll-margin-top: var(--alto-menu);
     padding: var(--espacio-seccion) 0;
     border-top: 1px solid var(--color-linea);
 }
@@ -392,20 +398,9 @@ a { color: inherit; text-decoration: none; }
 /* Aquí el título lleva debajo el dato y la explicación, no necesita margen extra */
 .coleccion .seccion__cabecera { margin-bottom: 0; }
 
-.coleccion__dato {
-    margin-top: .8rem;
-    font-size: var(--texto-pequeno);
-    letter-spacing: var(--tracking-amplio);
-    text-transform: lowercase;
-    color: var(--color-gris);
-}
+.coleccion__dato { margin-top: 1rem; }
 
-.coleccion__explicacion {
-    max-width: var(--ancho-lectura);
-    margin-top: 1.4rem;
-    font-size: var(--texto-cuerpo);
-    line-height: var(--interlineado-texto);
-}
+.coleccion__explicacion { margin-top: 1.4rem; }
 
 .coleccion__pie { margin-top: var(--espacio-titulo); }
 
@@ -445,7 +440,8 @@ a { color: inherit; text-decoration: none; }
     transition: scale var(--transicion-suave);
 }
 
-.carrusel__obra:hover img { scale: 1.04; }
+.carrusel__obra:hover img,
+.carrusel__obra:focus-visible img { scale: 1.04; }
 
 @keyframes carrusel-izquierda {
     from { transform: translateX(0); }
@@ -458,16 +454,55 @@ a { color: inherit; text-decoration: none; }
 }
 
 
-/* ---------- 6. RESPONSIVE ---------- */
+/* ---------- 6. PIE DE PÁGINA ---------- */
+/* Mismo contenido que el pie de CV, Press y Contact */
+.site-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    padding: 30px var(--margen-lateral);
+    padding-bottom: 90px;   /* deja libre el espacio del botón de pausa (fijo abajo a la derecha) */
+    border-top: 1px solid var(--color-linea);
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--texto-pie);
+    letter-spacing: .03em;
+}
+
+.social-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.social-link svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+}
+
+.footer-note {
+    font-size: 10px;
+    letter-spacing: .1em;
+    color: var(--color-gris);
+}
+
+
+/* ---------- 7. RESPONSIVE ---------- */
 
 /* Accesibilidad: sin movimiento si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
     .orbita, .obra__marco { animation: none; }
     html { scroll-behavior: auto; }
 
-    /* Sin animación, el carrusel se recorre a mano */
+    /* Sin animación, el carrusel se recorre a mano y no hace falta el botón de pausa */
     .carrusel { overflow-x: auto; }
     .carrusel--listo .carrusel__pista { animation: none; }
+    .pausa { display: none; }
+    .site-footer { padding-bottom: 30px; }
 }
 
 /* Móvil */
@@ -475,23 +510,36 @@ a { color: inherit; text-decoration: none; }
     :root {
         --orbita:     74vw;
         --obra:       calc(var(--orbita) * 0.22);
-        --alto-menu:  6rem;   /* el menú ocupa dos líneas */
+        --alto-menu:  130px;  /* en celular el menú ocupa varias líneas */
         --carrusel-alto: 200px;
     }
 
-    .menu { flex-direction: column; gap: .8rem; }
-    .menu__links { gap: 1rem; font-size: 0.7rem; }
-
     .statement,
     .bio { grid-template-columns: 1fr; }
+
+    .statement__textura {
+        position: static;
+        aspect-ratio: 16 / 9;
+    }
 
     /* En móvil la foto va arriba del texto */
     .bio__foto {
         position: static;
         order: -1;
     }
-    .statement__textura {
-        position: static;
-        aspect-ratio: 16 / 9;
+
+    /* Nombre en dos líneas para que no choque con las obras */
+    .inicio__nombre {
+        white-space: normal;
+        width: min-content;
+        margin: 0 auto;
     }
+    .inicio__oficio { max-width: 13em; margin-inline: auto; line-height: 1.8; }
+
+    .site-footer { flex-wrap: wrap; }
+    .footer-note { width: 100%; order: 3; }
+    .site-footer { padding-bottom: 80px; }
+    .social-link { font-size: 11px; gap: 8px; }
+
+    .pausa { bottom: 14px; padding: 7px 13px; font-size: 12px; }
 }
