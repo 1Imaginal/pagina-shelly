@@ -6,7 +6,7 @@
   <title>Work — Shelly Sarfati</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/work.css">
   <link rel="stylesheet" href="css/nav.css">
 </head>
@@ -66,6 +66,9 @@
       <svg viewBox="0 0 48 16" aria-hidden="true"><path d="M1 8h45M39 1l7 7-7 7"/></svg>
     </button>
 
+    <!-- Leyenda: va encima de la obra (la coloca la escena 3D) -->
+    <p class="hint" id="label-hint" aria-live="polite">Da clic en la obra para verla de cerca</p>
+
     <!-- Ficha técnica -->
     <div class="label" id="label">
       <p class="label-title"><span id="label-title"></span><span class="label-year" id="label-year"></span></p>
@@ -76,5 +79,487 @@
 
   <script src="js/obras.js"></script>
   <script src="js/work.js"></script>
+  <script src="js/mobiliario.js"></script>
+
+  <!-- =====================================================================
+       SALA 3D (Three.js)
+       Escena en metros reales: muro blanco, mesa, saguaro en maceta.
+       La obra se cuelga a su medida real; la foto se superpone en HTML
+       sobre la cara frontal del bastidor 3D, que es el que proyecta sombra.
+       Está escrita aquí dentro (y no en un .js aparte) para que funcione
+       también abriendo el archivo con doble clic, sin servidor.
+       Si el navegador no tiene WebGL, se queda la sala de CSS de respaldo.
+       ===================================================================== -->
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+    } }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+    import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    // ---------- Medidas de la sala (metros) ----------
+    const SALA = { ancho: 8, alto: 3.2, fondo: 10 };
+    const MESA = { ancho: 1.7, alto: 0.75, fondo: 0.6, x: 0, z: 0.42 };
+    const CACTUS_X = 1.95;        // a la derecha de la mesa, fuera del área de las obras
+    const CENTRO_OBRA = 1.55;     // altura de museo al centro de la obra
+    const BASTIDOR = 0.035;       // grosor del bastidor
+
+    // ---------- Colores: todo blanco "clay", la obra es el único color ----------
+    const C = {
+      muro: 0xf3f2ef, piso: 0xdcd8d1, techo: 0xf6f5f3,
+      mueble: 0xf1efeb, maceta: 0xeeece8, tierra: 0xcfcac1, cactus: 0xf2f1ee,
+      bastidor: 0xe9e6e0,
+    };
+
+    const gallery = document.getElementById('gallery');
+    const viewport = gallery.querySelector('.room-viewport');
+    const art = document.getElementById('artwork');
+    const ficha = document.getElementById('label');
+    const leyenda = document.getElementById('label-hint');
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    } catch (e) { console.warn('Sin WebGL: se usa la sala CSS.', e); throw e; }
+
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    const EXPOSICION = 1.08;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.VSMShadowMap;
+    renderer.shadowMap.autoUpdate = false;   // las sombras solo se recalculan cuando la obra cambia
+    renderer.domElement.className = 'sala3d';
+
+    // Capa "frente": vuelve a dibujar SOLO los objetos que quedan delante de la obra
+    // (jarrón, mesa, cactus) encima de la foto, recortada al área del cuadro.
+    // Así la foto queda detrás del modelo 3D sin depender de permisos de Wix.
+    const FRENTE = 1;   // capa de Three.js para esos objetos
+    const frente = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    frente.setPixelRatio(renderer.getPixelRatio());
+    frente.outputColorSpace = THREE.SRGBColorSpace;
+    frente.toneMapping = THREE.ACESFilmicToneMapping;
+    frente.setClearColor(0x000000, 0);
+    frente.domElement.className = 'sala3d sala3d-frente';
+    viewport.appendChild(renderer.domElement);
+    gallery.appendChild(frente.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(C.muro);
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envPrincipal = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    const envFrente = new THREE.PMREMGenerator(frente).fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = envPrincipal;
+    scene.environmentIntensity = 0.35;
+
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.05, 40);
+
+    const mat = (color, rough = 0.92) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 });
+    const sombra = (m, cast = true, receive = true) => { m.castShadow = cast; m.receiveShadow = receive; return m; };
+
+    // ---------- Cuarto ----------
+    const cuarto = new THREE.Group();
+    const plano = (w, h, color) => sombra(new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat(color)), false, true);
+    const muro = plano(SALA.ancho, SALA.alto, C.muro); muro.position.set(0, SALA.alto / 2, 0);
+    const piso = plano(SALA.ancho, SALA.fondo, C.piso); piso.rotation.x = -Math.PI / 2; piso.position.set(0, 0, SALA.fondo / 2);
+    piso.material.roughness = 0.8;
+    const techo = plano(SALA.ancho, SALA.fondo, C.techo); techo.material.emissive = new THREE.Color(0xe9e7e3); techo.material.emissiveIntensity = 0.55; techo.rotation.x = Math.PI / 2; techo.position.set(0, SALA.alto, SALA.fondo / 2);
+    const izq = plano(SALA.fondo, SALA.alto, C.muro); izq.rotation.y = Math.PI / 2; izq.position.set(-SALA.ancho / 2, SALA.alto / 2, SALA.fondo / 2);
+    const der = plano(SALA.fondo, SALA.alto, C.muro); der.rotation.y = -Math.PI / 2; der.position.set(SALA.ancho / 2, SALA.alto / 2, SALA.fondo / 2);
+    // zoclo y sombra de junta techo-muro
+    const zoclo = sombra(new THREE.Mesh(new THREE.BoxGeometry(SALA.ancho, 0.07, 0.015), mat(C.mueble)));
+    zoclo.position.set(0, 0.035, 0.0075);
+    cuarto.add(muro, piso, techo, izq, der, zoclo);
+    scene.add(cuarto);
+
+    // ---------- Mesa (patas de placa, como la referencia) ----------
+    const mesa = new THREE.Group();
+    const cubierta = sombra(new THREE.Mesh(new THREE.BoxGeometry(MESA.ancho, 0.04, MESA.fondo), mat(C.mueble, 0.85)));
+    cubierta.position.y = MESA.alto - 0.02;
+    const pata = () => sombra(new THREE.Mesh(new THREE.BoxGeometry(0.04, MESA.alto - 0.04, MESA.fondo - 0.04), mat(C.mueble, 0.85)));
+    const p1 = pata(); p1.position.set(-MESA.ancho / 2 + 0.1, (MESA.alto - 0.04) / 2, 0);
+    const p2 = pata(); p2.position.set(MESA.ancho / 2 - 0.1, (MESA.alto - 0.04) / 2, 0);
+    // libro y jarrón sobre la mesa: objetos cotidianos que también dan escala
+    const libro = sombra(new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.035, 0.17), mat(C.mueble)));
+    libro.position.set(-0.45, MESA.alto + 0.0175, 0.02); libro.rotation.y = 0.12;
+    const jarronPerfil = [[0, 0], [0.055, 0], [0.07, 0.06], [0.06, 0.16], [0.035, 0.2], [0.035, 0.24], [0.028, 0.24], [0.028, 0.2], [0, 0.2]]
+      .map(([r, y]) => new THREE.Vector2(r, y));
+    const jarron = sombra(new THREE.Mesh(new THREE.LatheGeometry(jarronPerfil, 64), mat(C.maceta, 0.7)));
+    jarron.position.set(0.5, MESA.alto, -0.05);
+    mesa.add(cubierta, p1, p2, libro, jarron);
+    mesa.position.set(MESA.x, 0, MESA.z);
+    scene.add(mesa);
+    const alFrente = obj => obj.traverse(o => o.layers.enable(FRENTE));
+    alFrente(mesa);
+
+    // ---------- Saguaro en maceta ----------
+    // Costillas: desplaza cada vértice hacia fuera según su ángulo alrededor del eje Y
+    function costillas(geo, n, amp) {
+      const p = geo.attributes.position;
+      for (let i = 0; i < p.count; i++) {
+        const x = p.getX(i), z = p.getZ(i), r = Math.hypot(x, z);
+        if (r < 1e-5) continue;
+        const th = Math.atan2(z, x);
+        const f = 1 + amp * (Math.pow(Math.abs(Math.cos(th * n / 2)), 0.6) - 0.55);
+        p.setX(i, x * f); p.setZ(i, z * f);
+      }
+      geo.computeVertexNormals();
+      return geo;
+    }
+    // Columna con punta redondeada
+    function columna(radio, alto, n = 14) {
+      const pts = [];
+      const cuerpo = alto - radio;
+      for (let i = 0; i <= 24; i++) {
+        const t = i / 24;
+        pts.push(new THREE.Vector2(radio * (1 - 0.06 * t), t * cuerpo));          // se adelgaza un poco
+      }
+      for (let i = 1; i <= 12; i++) {
+        const a = (i / 12) * Math.PI / 2;
+        pts.push(new THREE.Vector2(radio * 0.94 * Math.cos(a), cuerpo + radio * 0.95 * Math.sin(a)));
+      }
+      pts.push(new THREE.Vector2(0, cuerpo + radio * 0.95));
+      return costillas(new THREE.LatheGeometry(pts, 120), n, 0.11);
+    }
+    function brazo(material, { altura, salida, largo, radio, giro }) {
+      const g = new THREE.Group();
+      const codo = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, altura, 0),
+        new THREE.Vector3(salida * 0.55, altura - 0.03, 0),
+        new THREE.Vector3(salida * 0.95, altura + 0.08, 0),
+        new THREE.Vector3(salida, altura + 0.3, 0),
+      ]);
+      g.add(sombra(new THREE.Mesh(new THREE.TubeGeometry(codo, 48, radio, 48, false), material)));
+      const col = sombra(new THREE.Mesh(columna(radio, largo, 12), material));
+      col.position.set(salida, altura + 0.26, 0);
+      g.add(col);
+      g.rotation.y = giro;
+      return g;
+    }
+    const cactus = new THREE.Group();
+    const mCactus = mat(C.cactus, 0.75);
+    const macetaPerfil = [[0, 0], [0.19, 0], [0.205, 0.015], [0.235, 0.44], [0.215, 0.44], [0.19, 0.06], [0, 0.06]]
+      .map(([r, y]) => new THREE.Vector2(r, y));
+    const maceta = sombra(new THREE.Mesh(new THREE.LatheGeometry(macetaPerfil, 96), mat(C.maceta, 0.8)));
+    const tierra = sombra(new THREE.Mesh(new THREE.CircleGeometry(0.215, 64), mat(C.tierra, 1)), false, true);
+    tierra.rotation.x = -Math.PI / 2; tierra.position.y = 0.4;
+    const tronco = sombra(new THREE.Mesh(columna(0.105, 1.62, 14), mCactus));
+    tronco.position.y = 0.38;
+    cactus.add(maceta, tierra, tronco,
+      brazo(mCactus, { altura: 0.38 + 0.78, salida: 0.24, largo: 0.62, radio: 0.072, giro: Math.PI * 0.85 }),   // hacia atrás-izquierda
+      brazo(mCactus, { altura: 0.38 + 0.98, salida: 0.22, largo: 0.46, radio: 0.064, giro: -Math.PI * 0.1 }),   // hacia la derecha-frente
+    );
+    let cactusMeta = CACTUS_X;
+    const cactusDestino = () => CACTUS_X;   // fijo: su sombra y posición vienen del modelo de Blender
+    cactus.position.set(CACTUS_X, 0, 0.55);
+    cactus.rotation.y = 0.2;
+    scene.add(cactus);
+    alFrente(cactus);
+
+    // ---------- Mobiliario modelado en Blender (js/mobiliario.js) ----------
+    // Si está, sustituye a la mesa y el cactus hechos por código (que quedan de respaldo).
+    // Se le ponen los mismos materiales "clay" de la sala para que todo combine.
+    if (window.MOBILIARIO_GLB) {
+      try {
+        const bin = Uint8Array.from(atob(window.MOBILIARIO_GLB), c => c.charCodeAt(0)).buffer;
+        new GLTFLoader().parse(bin, '', gltf => {
+          const m = {
+            maceta: mat(C.maceta, 0.8), tierra: mat(C.tierra, 1),
+            cactus: mat(C.cactus, 0.75), mueble: mat(C.mueble, 0.85), jarron: mat(C.maceta, 0.7),
+          };
+          gltf.scene.traverse(o => {
+            if (!o.isMesh) return;
+            const n = o.name.toLowerCase();
+            o.material = n.includes('maceta') ? m.maceta : n.includes('tierra') ? m.tierra
+              : n.includes('cactus') ? m.cactus : n.includes('jarr') ? m.jarron : m.mueble;
+            o.castShadow = !n.includes('tierra');
+            o.receiveShadow = true;
+            o.layers.enable(FRENTE);
+          });
+          // se respeta la posición y el giro exactos de Blender
+          scene.remove(mesa);
+          scene.remove(cactus);
+          scene.add(gltf.scene);
+          pedirCuadro(3);
+        }, e => console.warn('No se pudo leer mobiliario.js; se queda el procedural.', e));
+      } catch (e) { console.warn('Mobiliario de Blender no disponible', e); }
+    }
+
+    // ---------- Obra (bastidores 3D; la foto va encima en HTML) ----------
+    const obraGrupo = new THREE.Group();
+    scene.add(obraGrupo);
+    const mBastidor = mat(C.bastidor, 0.9);
+    const bastidorGeo = new THREE.BoxGeometry(1, 1, 1);
+    let bastidores = [];
+    function armarBastidores(n) {
+      if (bastidores.length === n) return;
+      bastidores.forEach(b => obraGrupo.remove(b));
+      bastidores = Array.from({ length: n }, () => {
+        const m = sombra(new THREE.Mesh(bastidorGeo, mBastidor), true, false);
+        obraGrupo.add(m);
+        return m;
+      });
+    }
+    // estado animado (metros)
+    const obra = { w: 1, h: 1, y: CENTRO_OBRA, piezas: 1, sep: 0 };
+    const meta = { ...obra };
+    function acomodarBastidores() {
+      const n = obra.piezas;
+      const anchoPieza = (obra.w - (n - 1) * obra.sep) / n;
+      bastidores.forEach((b, i) => {
+        b.scale.set(anchoPieza, obra.h, BASTIDOR);
+        b.position.set(-obra.w / 2 + anchoPieza / 2 + i * (anchoPieza + obra.sep), obra.y, BASTIDOR / 2 + 0.008);
+      });
+    }
+
+    // ---------- Luz ----------
+    // Cielo suave + luz de ventana desde la izquierda + baño de luz sobre la obra
+    scene.add(new THREE.HemisphereLight(0xfff8ef, 0xd3c9bb, 0.95));
+
+    const ventana = new THREE.DirectionalLight(0xffe8cf, 2.9);
+    ventana.position.set(-5.5, 4.2, 4.5);
+    ventana.target.position.set(0.6, 0.8, 0);
+    ventana.castShadow = true;
+    Object.assign(ventana.shadow.camera, { left: -5, right: 5, top: 4, bottom: -2, near: 0.5, far: 20 });
+    ventana.shadow.mapSize.set(2048, 2048);
+    ventana.shadow.radius = 14;
+    ventana.shadow.blurSamples = 24;
+    ventana.shadow.bias = -0.0004;
+    scene.add(ventana, ventana.target);
+
+    const baño = new THREE.SpotLight(0xfff6ea, 22, 0, 0.5, 1, 2);
+    baño.position.set(0, SALA.alto - 0.05, 1.7);
+    baño.castShadow = true;
+    baño.shadow.mapSize.set(1024, 1024);
+    baño.shadow.radius = 10;
+    baño.shadow.blurSamples = 20;
+    baño.shadow.bias = -0.0006;
+    scene.add(baño, baño.target);
+
+    // relleno cálido muy bajo desde la derecha (rebote)
+    const rebote = new THREE.PointLight(0xffe2c4, 3, 9, 2);
+    rebote.position.set(3.4, 1.4, 3);
+    scene.add(rebote);
+    scene.traverse(o => { if (o.isLight) o.layers.enable(FRENTE); });
+
+    // ---------- Postproceso: oclusión ambiental (sombras de contacto) ----------
+    let composer = null, gtao = null;
+    try {
+      composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      gtao = new GTAOPass(scene, camera, 1, 1);
+      gtao.updateGtaoMaterial({ radius: 0.45, distanceExponent: 1.4, thickness: 1.2, scale: 1.1, samples: 16 });
+      gtao.blendIntensity = 0.9;
+      composer.addPass(gtao);
+      composer.addPass(new OutputPass());
+    } catch (e) { console.warn('Sin oclusión ambiental', e); composer = null; }
+
+    // ---------- Cámara ----------
+    const FOV = 36;
+    // pose de cámara: posición (x,y,z), punto al que mira (tx, mira, tz) y fov
+    const CLAVES = ['x', 'y', 'z', 'tx', 'mira', 'tz', 'fov'];
+    const cam = { x: 0, y: 1.7, z: 6, tx: 0, mira: 1.32, tz: 0, fov: FOV };
+    const camMeta = { ...cam };
+    let cerca = false;
+
+    // ---------- Tomas especiales por colección ----------
+    // HEME AQUÍ MINI: pose final = Camara_web de sala_work_shelly.blend (ajustada por Echeve):
+    //   loc (-0.9286, -3.6742, 1.1926), rot (95.33°, 0°, -13.6°), FOV vertical 36°
+    // (sala_work_shelly.blend; Blender (x,y,z) → página (x, z, -y)).
+    // Ligero contrapicado, paneo a la derecha y dolly hacia el cuadro.
+    const TOMAS = {
+      mini: { x: -0.9286, y: 1.1926, z: 3.6742, tx: -0.040, mira: 1.545, tz: 0, fov: 36 },
+    };
+    const DURACION_TOMA = 2800;   // ms
+    let tomaActual = null;        // null = vista general | 'mini'
+    let recorrido = null;         // animación en curso { desde, hasta, t0, dur }
+    const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // easy ease (cúbica)
+    const raton = { x: 0, y: 0 };
+    function distanciaBase() {
+      const a = camera.aspect, t = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
+      const mitad = a < 1 ? Math.max(1.55, meta.w / 2 + 0.2) : 2.75;   // en vertical: mesa y obra completas; el cactus asoma al borde
+      const porAncho = mitad / (t * a);   // que se vean la obra, la mesa y el cactus completos
+      const porAlto = (a < 1 ? 1.9 : 2.3) / t;
+      return THREE.MathUtils.clamp(Math.max(porAncho, porAlto), 5.2, 15);
+    }
+    const poseGeneral = () => ({ x: 0, y: 1.7, z: distanciaBase(), tx: 0, mira: 1.32, tz: 0, fov: FOV });
+    function encuadreLejos() {
+      cactusMeta = cactusDestino();
+      Object.assign(camMeta, tomaActual ? { ...TOMAS[tomaActual] } : poseGeneral());
+    }
+    function encuadreCerca() {
+      const t = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
+      const d = Math.max(meta.h / (0.56 * 2 * t), meta.w / (0.7 * 2 * t * camera.aspect), 0.9);
+      // la cámara mira un poco por debajo de la obra para dejar libre la ficha abajo
+      const baja = d * t * 0.16;
+      Object.assign(camMeta, { x: 0, y: meta.y - baja, z: d + BASTIDOR, tx: 0, mira: meta.y - baja, tz: 0, fov: FOV });
+    }
+
+    function tamaño() {
+      const w = viewport.clientWidth || innerWidth, h = viewport.clientHeight || innerHeight;
+      renderer.setSize(w, h, false);
+      frente.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      if (composer) composer.setSize(w, h);
+      cerca ? encuadreCerca() : encuadreLejos();
+      pedirCuadro(3);
+    }
+
+    // ---------- Proyectar la cara frontal de la obra a pantalla ----------
+    const v = new THREE.Vector3();
+    function posicionarFoto() {
+      const zf = BASTIDOR + 0.009;
+      const xs = [], ys = [];
+      for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+        v.set(sx * obra.w / 2, obra.y + sy * obra.h / 2, zf).project(camera);
+        xs.push((v.x + 1) / 2 * viewport.clientWidth);
+        ys.push((1 - v.y) / 2 * viewport.clientHeight);
+      }
+      const l = Math.min(...xs), r = Math.max(...xs), t = Math.min(...ys), b = Math.max(...ys);
+      art.style.left = `${l}px`; art.style.top = `${t}px`;
+      art.style.width = `${r - l}px`; art.style.height = `${b - t}px`;
+      const W = viewport.clientWidth, H = viewport.clientHeight;
+      frente.domElement.style.clipPath = `inset(${t}px ${W - r}px ${H - b}px ${l}px)`;
+
+      // Heme aquí mini: la ficha se pega debajo del cuadro (hay espacio libre en el muro)
+      if (tomaActual === 'mini') {
+        ficha.classList.add('junto');
+        ficha.style.left = `${(l + r) / 2}px`;
+        ficha.style.top = `${Math.min(b + 26, H - ficha.offsetHeight - 24)}px`;
+      } else if (ficha.classList.contains('junto')) {
+        ficha.classList.remove('junto');
+        ficha.style.left = ''; ficha.style.top = '';
+      }
+      // durante el dolly la ficha se oculta y aparece al terminar
+      ficha.classList.toggle('en-recorrido', !!recorrido && tomaActual === 'mini');
+
+      // leyenda "Da clic…" centrada justo encima de la obra
+      leyenda.style.left = `${(l + r) / 2}px`;
+      leyenda.style.top = `${Math.max(t - 18, 64 + leyenda.offsetHeight)}px`;
+      leyenda.classList.toggle('en-recorrido', !!recorrido);
+    }
+
+    // ---------- Animación ----------
+    // Se renderiza solo mientras algo se mueve (ahorra batería)
+    let t0 = performance.now();
+    let pendiente = 2;           // cuadros por dibujar aunque nada se mueva
+    let estabaOculta = true;
+    const pedirCuadro = (n = 2) => { pendiente = Math.max(pendiente, n); };
+    const suave = (a, b, k) => a + (b - a) * k;
+    function cuadro(now) {
+      requestAnimationFrame(cuadro);
+      if (gallery.hidden) { t0 = now; estabaOculta = true; return; }
+      if (estabaOculta) { estabaOculta = false; tamaño(); pedirCuadro(3); }
+      const dt = Math.min((now - t0) / 1000, 0.05); t0 = now;
+      const kObra = 1 - Math.exp(-dt * 6.5);
+      const kCam = 1 - Math.exp(-dt * 4.2);
+
+      let mov = 0;
+      for (const k of ['w', 'h', 'y']) { mov = Math.max(mov, Math.abs(meta[k] - obra[k])); obra[k] = suave(obra[k], meta[k], kObra); }
+      const dc = cactusMeta - cactus.position.x;
+      cactus.position.x = Math.abs(dc) < 1e-4 ? cactusMeta : cactus.position.x + dc * kObra;
+      mov = Math.max(mov, Math.abs(dc));
+      const obraSeMueve = mov > 1e-4;
+      if (!obraSeMueve) Object.assign(obra, { w: meta.w, h: meta.h, y: meta.y });
+      acomodarBastidores();
+      renderer.shadowMap.needsUpdate = obraSeMueve || pendiente > 0;
+
+      // la luz sigue a la obra
+      baño.target.position.set(0, obra.y - 0.1, 0);
+      baño.angle = THREE.MathUtils.clamp(Math.atan(Math.max(obra.w, obra.h) * 0.9 / 1.7), 0.32, 0.62);
+
+      if (recorrido) {
+        // toma animada (dolly + tilt + paneo) con easy ease
+        const p = Math.min((now - recorrido.t0) / recorrido.dur, 1);
+        const e = easeInOut(Math.max(p, 0));
+        for (const k of CLAVES) cam[k] = recorrido.desde[k] + (recorrido.hasta[k] - recorrido.desde[k]) * e;
+        mov = 1;
+        if (p >= 1) { recorrido = null; pedirCuadro(2); }
+      } else {
+        // parallax suave con el ratón (solo en la vista general)
+        const libre = !cerca && !tomaActual;
+        const px = libre ? raton.x * 0.18 : 0, py = libre ? raton.y * 0.08 : 0;
+        for (const k of CLAVES) {
+          const dest = camMeta[k] + (k === 'x' ? px : k === 'y' ? py : 0);
+          mov = Math.max(mov, Math.abs(dest - cam[k]));
+          cam[k] = Math.abs(dest - cam[k]) < 1e-4 ? dest : suave(cam[k], dest, kCam);
+        }
+      }
+      if (mov <= 1e-4 && pendiente <= 0) return;   // nada cambió: no dibujar
+      pendiente--;
+      if (camera.fov !== cam.fov) { camera.fov = cam.fov; camera.updateProjectionMatrix(); }
+      camera.position.set(cam.x, cam.y, cam.z);
+      camera.lookAt(cam.tx, cam.mira, cam.tz);
+      camera.updateMatrixWorld();
+
+      posicionarFoto();
+      composer ? composer.render() : renderer.render(scene, camera);
+
+      // capa frente: solo objetos de la capa FRENTE, sin fondo
+      const fondo = scene.background;
+      scene.background = null; scene.environment = envFrente;
+      camera.layers.set(FRENTE);
+      frente.toneMappingExposure = EXPOSICION;
+      frente.render(scene, camera);
+      camera.layers.set(0);
+      scene.background = fondo; scene.environment = envPrincipal;
+    }
+
+    // ---------- API para work.js ----------
+    window.sala3d = {
+      listo: true,
+      get cerca() { return cerca; },
+      colgar({ anchoCm, altoCm, piezas = 1, sep = 0 }, inmediato = false) {
+        const w = anchoCm / 100, h = altoCm / 100;
+        const y = Math.min(Math.max(CENTRO_OBRA, MESA.alto + 0.16 + h / 2), SALA.alto - 0.3 - h / 2);
+        Object.assign(meta, { w, h, y, piezas, sep: sep / 100 });
+        obra.piezas = piezas; obra.sep = sep / 100;
+        armarBastidores(piezas);
+        if (inmediato) Object.assign(obra, meta);
+        cerca ? encuadreCerca() : encuadreLejos();
+        pedirCuadro(3);
+      },
+      acercar() { recorrido = null; cerca = !cerca; cerca ? encuadreCerca() : encuadreLejos(); return cerca; },
+      alejar() { cerca = false; encuadreLejos(); },
+      // Cambia de toma. desdeGeneral: arrancar desde la vista general (al abrir una obra)
+      toma(nombre, { animar = true, desdeGeneral = false } = {}) {
+        nombre = TOMAS[nombre] ? nombre : null;
+        if (desdeGeneral) { Object.assign(cam, poseGeneral()); recorrido = null; }
+        else if (nombre === tomaActual && !cerca) return;
+        tomaActual = nombre;
+        cerca = false;
+        encuadreLejos();
+        if (animar && nombre) {
+          recorrido = { desde: { ...cam }, hasta: { ...camMeta }, t0: performance.now() + 250, dur: DURACION_TOMA };
+        } else if (!animar) {
+          Object.assign(cam, camMeta); recorrido = null;
+        }
+        pedirCuadro(3);
+      },
+    };
+
+    // activar: ocultar la sala CSS y sacar la foto al nivel de la galería
+    gallery.classList.add('is-3d');
+    gallery.insertBefore(art, document.getElementById('prev'));
+    art.classList.add('is-3d');
+    addEventListener('resize', tamaño);
+    addEventListener('pointermove', e => { raton.x = e.clientX / innerWidth - 0.5; raton.y = 0.5 - e.clientY / innerHeight; });
+    tamaño();
+    Object.assign(cam, camMeta);
+    if (window.__obraActual) window.sala3d.colgar(window.__obraActual, true);
+    if (!gallery.hidden && new URLSearchParams(location.search).get('serie') === 'heme-aqui-mini')
+      window.sala3d.toma('mini', { animar: true, desdeGeneral: true });
+    requestAnimationFrame(cuadro);
+  </script>
 </body>
 </html>

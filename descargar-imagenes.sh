@@ -1,0 +1,42 @@
+#!/bin/bash
+# Descarga las fotos originales de las obras desde el sitio de Shelly (Wix)
+# Uso: abre Terminal y escribe:  bash ~/Documents/GitHub/pagina-shelly/descargar-imagenes.sh
+set -e
+cd "$(dirname "$0")"
+mkdir -p img/originales
+n=0
+bajar() { mkdir -p "img/originales/$1"; if curl -fsSL "https://static.wixstatic.com/media/$2" -o "img/originales/$1/$3"; then n=$((n+1)); echo "  ✓ $1/$3"; else echo "  ✗ no se pudo: $1/$3"; fi; }
+echo "Descargando obras..."
+bajar heme-aqui "833697_e3adb27ac5a54babb8910b84180803f1~mv2.jpg" "01-precursor.jpg"
+bajar heme-aqui "833697_fbd975cdf190430da196acdaa7dfa52e~mv2.jpg" "02-aridez-que-florece.jpg"
+bajar heme-aqui "833697_0d2c9ee36d294b6b954e580a1ad3420f~mv2.jpg" "03-el-peso-del-origen.jpg"
+bajar heme-aqui "833697_f139fe1f469a496f87c584936125174b~mv2.jpg" "04-el-cuerpo-de-la-ausencia.jpg"
+bajar heme-aqui "833697_82cdc96b243944508044752414340108~mv2.jpg" "05-re-trip-i.jpg"
+bajar heme-aqui "833697_d0db54513b404abd9a90d86312055c0e~mv2.jpg" "06-re-trip-i.jpg"
+bajar heme-aqui "833697_70fcc1a299d54061b527bde6cf6d6a91~mv2.jpg" "07-re-trip-iii.jpg"
+bajar heme-aqui "833697_1abf0e8a91ba4edf8b9e15554f5ef355~mv2.jpg" "08-simbiosis-inter-racial.jpg"
+bajar heme-aqui "833697_168da4f1314a4d429b74d069f3367f4a~mv2.jpg" "09-esfuerzo-silente.jpg"
+bajar heme-aqui "833697_9584c6d65b294aaaa8d3ded076850b44~mv2.jpg" "10-espinas-intrinsecas.jpg"
+bajar heme-aqui "833697_153d2de20edc43b493dc4d70c43f8e9b~mv2.jpg" "11-simbiosis-primigenia.jpg"
+bajar heme-aqui-mini "833697_6316f3ef643f4f42a56561d5eb7d9ecb~mv2.jpg" "01-espinas-intrinsecas.jpg"
+bajar heme-aqui-mini "833697_3d4de02ca9be45c9a4a334237756b2f9~mv2.jpg" "02-el-peso-del-origen.jpg"
+bajar heme-aqui-mini "833697_c972dde0c12b45f0bbca01e3ffb54b99~mv2.jpg" "03-simbiosis-primigenia.jpg"
+bajar heme-aqui-mini "833697_5fe6069c64074008a53dbed1977f3d99~mv2.jpg" "04-flor-en-el-desierto.jpg"
+bajar heme-aqui-mini "833697_332c426b908b4d8d86a1c05581513eb7~mv2.jpg" "05-espinas-intrinsecas-ii.jpg"
+bajar heme-aqui-mini "833697_fbc042ac25104111a79e8833c83c8b71~mv2.jpg" "06-heme-aqui-ii.jpg"
+bajar heme-aqui-mini "833697_be4e4a2f286b4019b6caa559e30612c1~mv2.jpg" "07-intercambio-nocturno.jpg"
+bajar heme-aqui-mini "833697_5101a4ade0404ccabd35560c6fe651bb~mv2.jpg" "08-eslabones.jpg"
+bajar heme-aqui-mini "833697_06b9cb35d7b04666987107ff0dba7394~mv2.jpg" "09-heme-aqui.jpg"
+bajar heme-aqui-mini "833697_b5a33f2c1f8a411bb9374744d6ad12c9~mv2.jpg" "10-crecimiento-ancestral.jpg"
+bajar heme-aqui-mini "833697_785d223d592c4393858f28495abfdb5a~mv2.jpg" "11-espinas-intrinsecas.jpg"
+bajar heme-aqui-mini "833697_e9ac13f8e90446689d3871b00389b7f4~mv2.jpg" "12-fragmentos-de-supervivencia.jpg"
+bajar heme-aqui-mini "833697_7d4b2aadc013411fa39e2d4637b5f01e~mv2.jpg" "13-entre-tunas.jpg"
+bajar heme-aqui-mini "833697_bbea3874c6354097bbe36d501fb3d831~mv2.jpg" "14-injerto-espontaneo.jpg"
+bajar heme-aqui-mini "833697_8d6d5de910cc4b9faa041b419c9aa889~mv2.jpg" "15-el-cuerpo-de-la-ausencia.jpg"
+bajar heme-aqui-mini "833697_e30e5c36a1fa4024a53ab7e114e36e0a~mv2.jpg" "16-insercion-cultural.jpg"
+bajar cartografias "833697_a3704acdd2904fc3b047ca2d6db3aa8d~mv2.jpeg" "01-modelo-de-un-triptico-i-ii-iii.jpeg"
+bajar cartografias "833697_80f8f90fe6cf4bea96a8814a002633a7~mv2.jpg" "02-deconstruir-para-construir.jpg"
+bajar cartografias "833697_6ded947a794848c79b4eaf017b598ef4~mv2.jpg" "03-gran-matriz.jpg"
+bajar cartografias "833697_562d6341b1034c298e9e8cad1fd6723e~mv2.jpg" "04-cartografias-de-un-ser-incompleto.jpg"
+bajar cartografias "833697_33f6993b66e84bc681c77f4d5ebea931~mv2.jpg" "05-hueco-habitado.jpg"
+echo "Listo: $n imágenes en img/originales"
