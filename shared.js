@@ -14,6 +14,13 @@ const content = window.SHELLY_CONTENT;
 function node(tag, text, className) { const el = document.createElement(tag); if(text) el.textContent = text; if(className) el.className = className; return el; }
 function renderContent() {
   document.querySelectorAll('[data-language]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === language)));
+  const description = document.querySelector('.texts-description');
+  if (description) {
+    description.textContent = language === 'es'
+      ? 'Una selección de textos curatoriales que ofrecen distintas miradas sobre la obra de Shelly Sarfati, sus procesos y su universo visual.'
+      : 'A selection of curatorial texts offering different perspectives on Shelly Sarfati’s work, her creative processes, and her visual universe.';
+    description.lang = language;
+  }
   const essays = document.querySelector('#essays');
   if (essays) {
     essays.replaceChildren();
