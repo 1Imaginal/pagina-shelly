@@ -183,5 +183,128 @@ window.SHELLY_CONTENT = {
         }
       ]
     }
+  ],
+  "cv_en": [
+    {
+      "title": "EDUCATION",
+      "entries": [
+        {
+          "year": "2024",
+          "text": "Tutorial certification / advanced course with art curator and critic David Mateo and visual artist Arturo Montoto"
+        },
+        {
+          "year": "2017-2022",
+          "text": "Art workshop with Eugenia Orozco"
+        },
+        {
+          "year": "2015",
+          "text": "Diploma in encaustic painting with Alicia Tormey"
+        },
+        {
+          "year": "2014",
+          "text": "Diploma in Visual Marketing, Universidad Janet Klein"
+        },
+        {
+          "year": "2013-2016",
+          "text": "Art workshop with Mercedes Arellano"
+        },
+        {
+          "year": "2004-2006",
+          "text": "Bachelor’s degree in Graphic Design, specializing in Visual Communication, Instituto de Artes y Diseño Shenkar"
+        },
+        {
+          "year": "2001-2004",
+          "text": "Bachelor’s degree in Graphic Design, Universidad Anáhuac"
+        }
+      ]
+    },
+    {
+      "title": "SOLO EXHIBITIONS",
+      "entries": [
+        {
+          "year": "2025",
+          "text": "Heme Aquí, Centro de Arte Bernardo Quintana (CABQA), Querétaro, Mexico"
+        },
+        {
+          "year": "2017",
+          "text": "Diálogos, Galería Pedro Gerson, Mexico City, Mexico"
+        }
+      ]
+    },
+    {
+      "title": "GROUP EXHIBITIONS",
+      "entries": [
+        {
+          "year": "2025",
+          "text": "XX Tamayo Biennial, contemporary painting exhibition, MACCO; Transformadores, Insularte, Alicante, Spain; Inspiratori del cambiamento, Spoleto, Italy"
+        },
+        {
+          "year": "2023",
+          "text": "Mujer Técnica Mixta, Parque Industrial Naucalpan, Mexico City, Mexico"
+        },
+        {
+          "year": "2022",
+          "text": "Colectiva 512, Instalación Sierra Gorda, Mexico City, Mexico"
+        },
+        {
+          "year": "2020",
+          "text": "#ColecciónArte, Área Galería, Santa Fe, Mexico City, Mexico"
+        },
+        {
+          "year": "2016",
+          "text": "Contrastes, Polyforum Siqueiros, Mexico City, Mexico; ETHOS, emerging artists painting exhibition, Expo Bancomer Santa Fe, Mexico"
+        },
+        {
+          "year": "2015",
+          "text": "Rescatemos nuestra fauna, Universidad Albert Einstein, State of Mexico, Mexico; Contrastes, Galería Pedro Gerson, Mexico City, Mexico"
+        },
+        {
+          "year": "2014",
+          "text": "Contrastes, Polyforum Siqueiros, Mexico City, Mexico"
+        }
+      ]
+    },
+    {
+      "title": "PUBLICATIONS AND PRESS",
+      "entries": [
+        {
+          "year": "2023",
+          "text": "Book Mujer Técnica Mixta, by Helen Marcos and Sully Mitriani, Mexico City, Mexico"
+        },
+        {
+          "year": "2021",
+          "text": "Illustrations for the book Avrah Kahdabra, creo mientras hablo, by Fanny Sarfati, Mexico City, Mexico"
+        },
+        {
+          "year": "2019",
+          "text": "Exhibition report on #ColecciónArte, RSVP magazine, issue 568, June 7, 2019, p. 31"
+        },
+        {
+          "year": "2016",
+          "text": "Artist compilation produced by Lewinson Art, Mexico City"
+        },
+        {
+          "year": "2014",
+          "text": "Exhibition report on Contrastes, Reforma newspaper, July 11, 2014; exhibition report on Diálogos, CDI newspaper, issue 2655, October 12, 2014"
+        }
+      ]
+    },
+    {
+      "title": "AWARDS AND RECOGNITION",
+      "entries": [
+        {
+          "year": "2025",
+          "text": "Work selected (“Aridez que florece”) for the XX Tamayo Biennial."
+        },
+        {
+          "year": "2012",
+          "text": "Award-winning poster on raising social awareness of community values."
+        },
+        {
+          "year": "2005",
+          "text": "First place nationwide for the logo of the 4th Centenary of Don Quixote de la Mancha. Exhibition held in Spain, organized by the Government of Castilla-La Mancha."
+        }
+      ]
+    }
   ]
 };

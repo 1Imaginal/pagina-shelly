@@ -36,18 +36,23 @@ function renderContent() {
   }
   const bio = document.querySelector('#biography');
   if (bio) { bio.lang = language; bio.replaceChildren(...content.bio[language].map(p => node('p', p))); }
+  // Timeline del CV: sigue al switch English / Español.
+  // content.cv_en = inglés, content.cv = español (este último también lo usa build-cv.py).
+  const cvTimeline = document.querySelector('#cv-timeline');
+  if (cvTimeline) {
+    const cvData = language === 'en' && content.cv_en ? content.cv_en : content.cv;
+    cvTimeline.lang = cvData === content.cv_en ? 'en' : 'es';
+    cvTimeline.replaceChildren(...cvData.map(category => {
+      const section = node('section', '', 'cv-section');
+      const timeline = node('ol', '', 'timeline');
+      category.entries.forEach(entry => { const li = node('li'); li.append(node('time', entry.year), node('p', entry.text)); timeline.append(li); });
+      section.append(node('h2', category.title), timeline);
+      return section;
+    }));
+  }
 }
 document.querySelectorAll('[data-language]').forEach(button => button.addEventListener('click', () => { language = button.dataset.language; renderContent(); }));
 if (content) renderContent();
-if (currentPage === 'cv') {
-  content.cv.forEach((category, index) => {
-    const section = node('section', '', 'cv-section');
-    const heading = node('h2', category.title); heading.lang = 'es';
-    const timeline = node('ol', '', 'timeline'); timeline.lang = 'es';
-    category.entries.forEach(entry => { const li = node('li'); li.append(node('time', entry.year), node('p', entry.text)); timeline.append(li); });
-    section.append(heading, timeline); document.querySelector('#cv-timeline').append(section);
-  });
-}
 const form = document.querySelector('#contact-form');
 if (form) form.addEventListener('submit', async event => {
   event.preventDefault();

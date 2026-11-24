@@ -370,6 +370,42 @@ a { color: inherit; }
   .label { bottom: 92px; }
 }
 
+/* ---------- Pie de página ---------- */
+/* Igual que el de CV, Press y Contact (styles.css), que esta página no carga */
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  padding: 30px 6%;
+  border-top: 1px solid var(--line);
+}
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  letter-spacing: .03em;
+  text-decoration: none;
+}
+.social-link svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+.footer-note {
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .site-footer { flex-wrap: wrap; padding: 28px 6%; }
+  .footer-note { width: 100%; }
+  .social-link { font-size: 11px; gap: 8px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; }
 }
