@@ -10,7 +10,8 @@
 
   const WIX = 'https://static.wixstatic.com/media/';
   const srcGrande = img => img.startsWith('http') || img.includes('/') ? img : `${WIX}${img}/v1/fit/w_1800,h_1800,q_90/${img}`;
-  const srcThumb  = img => img.startsWith('http') || img.includes('/') ? img : `${WIX}${img}/v1/fit/w_700,h_700,q_85/${img}`;
+  // imágenes locales: miniatura en la subcarpeta thumbs/ ; las de Wix se piden reducidas
+  const srcThumb  = img => img.startsWith('http') ? img : img.includes('/') ? img.replace(/\/([^/]+)$/, '/thumbs/$1') : `${WIX}${img}/v1/fit/w_700,h_700,q_85/${img}`;
 
   // "Precursor, 2021" → { titulo: "Precursor", anio: "2021" }
   const partirFicha = ficha => {
@@ -44,17 +45,44 @@
   // --- Pestañas de colección ---------------------------------------------
   function pintarTabs() {
     tabsEl.innerHTML = '';
-    tabsEl.setAttribute('role', 'tablist');
-    COLECCIONES.forEach(c => {
+    const activa = serie.padre || serie.id;          // la serie principal seleccionada
+    const cambiar = c => { serie = c; pintarTabs(); pintarGrid(); actualizarURL(false); };
+
+    // Fila principal: solo series principales (Heme aquí, Cartografías)
+    const fila = document.createElement('div');
+    fila.className = 'series-row';
+    fila.setAttribute('role', 'tablist');
+    COLECCIONES.filter(c => !c.padre).forEach(c => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'series-tab';
       b.setAttribute('role', 'tab');
-      b.setAttribute('aria-selected', c === serie);
+      b.setAttribute('aria-selected', c.id === activa);
       b.innerHTML = `${c.nombre}<sup>${c.obras.length}</sup>`;
-      b.addEventListener('click', () => { serie = c; pintarTabs(); pintarGrid(); actualizarURL(false); });
-      tabsEl.appendChild(b);
+      b.addEventListener('click', () => cambiar(c));
+      fila.appendChild(b);
     });
+    tabsEl.appendChild(fila);
+
+    // Subseries (p. ej. Heme aquí mini) debajo de su serie principal
+    const hijas = COLECCIONES.filter(c => c.padre === activa);
+    if (hijas.length) {
+      const sub = document.createElement('div');
+      sub.className = 'series-sub';
+      sub.setAttribute('role', 'tablist');
+      sub.setAttribute('aria-label', 'Subseries');
+      [COLECCIONES.find(c => c.id === activa), ...hijas].forEach(c => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'series-subtab';
+        b.setAttribute('role', 'tab');
+        b.setAttribute('aria-selected', c === serie);
+        b.innerHTML = `${c.nombre}<span>${c.obras.length}</span>`;
+        b.addEventListener('click', () => cambiar(c));
+        sub.appendChild(b);
+      });
+      tabsEl.appendChild(sub);
+    }
   }
 
   // --- Vista general: foto + título ---------------------------------------
@@ -85,10 +113,30 @@
     $('gallery-back').focus();
   }
 
-  function cerrar() {
-    gallery.classList.remove('is-open');
+  // Leyenda bajo la ficha: qué pasa al dar clic en la obra
+  const tactil = matchMedia('(hover: none)').matches;
+  function leyenda(cerca) {
+    const el = $('label-hint');
+    if (!el) return;
+    el.textContent = cerca
+      ? (tactil ? 'Toca la obra para alejarte' : 'Da clic en la obra para alejarte')
+      : (tactil ? 'Toca la obra para verla de cerca' : 'Da clic en la obra para verla de cerca');
+  }
+
+  // ¿Está activa la sala 3D? (se carga aparte, en work.html)
+  const en3D = () => !!(window.sala3d && window.sala3d.listo);
+  const estaCerca = () => en3D() ? window.sala3d.cerca : room.classList.contains('is-close');
+  function alejar() {
+    if (en3D()) window.sala3d.alejar();
     room.classList.remove('is-close');
     room.style.transform = '';
+    art.setAttribute('aria-label', 'Acercarse a la obra');
+    leyenda(false);
+  }
+
+  function cerrar() {
+    gallery.classList.remove('is-open');
+    alejar();
     document.body.style.overflow = '';
     marcarVista('general');
     actualizarURL(false);
@@ -102,17 +150,18 @@
 
   // Calcula el tamaño real de la obra en el muro
   function colgar(obra) {
-    const r = wall.getBoundingClientRect();
-    const pxCm = Math.min(r.width / MURO_ANCHO_CM, r.height / MURO_ALTO_CM);
     const [a, b] = medidasCm(obra.medidas);
     const aspecto = proporciones.get(obra.img) || (b ? b / a : 1); // ancho / alto de la foto
 
     let anchoCm, altoCm;
     if (obra.piezas) {
-      // Conjunto de piezas iguales colgadas una junto a otra
+      // Conjunto de piezas: alto = el de una pieza; ancho = el de la foto del conjunto.
+      // Mientras carga la foto, se estima con piezas + separación.
       const altoPieza = Math.max(a, b), anchoPieza = Math.min(a, b);
       altoCm = altoPieza;
-      anchoCm = obra.piezas * anchoPieza + (obra.piezas - 1) * (obra.separacion || 8);
+      anchoCm = proporciones.has(obra.img)
+        ? altoPieza * proporciones.get(obra.img)
+        : obra.piezas * anchoPieza + (obra.piezas - 1) * (obra.separacion || 8);
     } else {
       // El lado más largo de la foto = la medida más grande de la ficha
       const mayor = Math.max(a, b);
@@ -120,6 +169,15 @@
       else { altoCm = mayor; anchoCm = mayor * aspecto; }
     }
 
+    // Sala 3D (si el navegador la pudo cargar): ella cuelga la obra en metros
+    // obras de varias piezas: un bastidor 3D por pieza, con su separación real
+    window.__obraActual = { anchoCm, altoCm, piezas: obra.piezas || 1, sep: obra.piezas ? (obra.separacion || 8) : 0 };
+    art.classList.toggle('is-multi', !!obra.piezas);
+    if (en3D()) { window.sala3d.colgar(window.__obraActual); return; }
+
+    // Sala CSS de respaldo
+    const r = wall.getBoundingClientRect();
+    const pxCm = Math.min(r.width / MURO_ANCHO_CM, r.height / MURO_ALTO_CM);
     const techoCm = r.height / pxCm;
     const centro = Math.min(CENTRO_CM, techoCm - MARGEN_CM - altoCm / 2);
     const bottomPx = (centro - altoCm / 2) * pxCm;
@@ -127,7 +185,6 @@
     art.style.width = `${anchoCm * pxCm}px`;
     art.style.height = `${altoCm * pxCm}px`;
     art.style.bottom = `${bottomPx}px`;
-    art.classList.toggle('is-multi', !!obra.piezas);
 
     // la luz sigue a la obra
     spot.style.left = '50%';
@@ -140,8 +197,7 @@
     const obra = serie.obras[indice];
     const { titulo, anio } = partirFicha(obra.ficha);
 
-    room.classList.remove('is-close');
-    room.style.transform = '';
+    alejar();
     art.classList.add('is-loading');
     label.classList.add('is-changing');
 
@@ -157,6 +213,9 @@
     nueva.onerror = () => { colgar(obra); art.classList.remove('is-loading'); };
     nueva.src = srcGrande(obra.img);
     colgar(obra); // tamaño provisional mientras carga
+
+    // Heme aquí mini: dolly hacia el cuadro al abrir (la toma se define en work.html)
+    if (en3D()) window.sala3d.toma(serie.id === 'heme-aqui-mini' ? 'mini' : null, { animar: true, desdeGeneral: !!inmediato });
 
     setTimeout(() => {
       $('label-title').textContent = titulo;
@@ -180,6 +239,12 @@
 
   // Clic en la obra: acercarse / alejarse
   art.addEventListener('click', () => {
+    if (en3D()) {
+      const c = window.sala3d.acercar();
+      art.setAttribute('aria-label', c ? 'Alejarse de la obra' : 'Acercarse a la obra');
+      leyenda(c);
+      return;
+    }
     if (room.classList.toggle('is-close')) {
       const a = art.getBoundingClientRect();
       const vw = innerWidth, vh = innerHeight;
@@ -188,6 +253,7 @@
       room.style.transform = `translate(${vw / 2 - cx}px, ${vh * .45 - cy}px) scale(${k})`;
       room.style.transformOrigin = `${cx}px ${cy}px`;
       art.setAttribute('aria-label', 'Alejarse de la obra');
+      leyenda(true);
     } else {
       room.style.transform = '';
       art.setAttribute('aria-label', 'Acercarse a la obra');
@@ -209,7 +275,7 @@
     if (gallery.hidden) return;
     if (e.key === 'ArrowRight') mostrar(indice + 1);
     else if (e.key === 'ArrowLeft') mostrar(indice - 1);
-    else if (e.key === 'Escape') room.classList.contains('is-close') ? art.click() : cerrar();
+    else if (e.key === 'Escape') estaCerca() ? art.click() : cerrar();
   });
   let x0 = null;
   gallery.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
@@ -220,7 +286,7 @@
     x0 = null;
   });
 
-  addEventListener('resize', () => { if (!gallery.hidden) { room.classList.remove('is-close'); room.style.transform = ''; colgar(serie.obras[indice]); } });
+  addEventListener('resize', () => { if (!gallery.hidden && !en3D()) { room.classList.remove('is-close'); room.style.transform = ''; colgar(serie.obras[indice]); } });
 
   // --- Inicio ---------------------------------------------------------------
   pintarTabs();
